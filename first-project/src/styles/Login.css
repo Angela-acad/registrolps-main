@@ -1,0 +1,68 @@
+
+body {
+    background-color: khaki;
+}
+
+.contenedor {
+    width: 400px;
+    background-color:beige;
+    border-radius: 20px;
+    padding: 5px 50px 50px; 
+    margin: auto; 
+}
+
+h1 {
+    color:darkkhaki;
+    text-align: center;
+    font-family: 'Franklin Gothic Medium';
+    font-size: 40px;
+}
+
+label {
+    margin: 15px 0 5px;
+    display: block;
+    font-family: 'Trebuchet MS';
+}
+
+input {
+    padding: 5px;
+    width: 100%;
+    display: block;
+}
+
+input[type="radio"] {
+  display: inline-block;
+  width: auto;
+  margin-right: 4px;
+  accent-color: darkkhaki;
+  cursor: pointer;
+}
+
+.radio {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 15px;
+  font-family: 'Trebuchet MS';
+}
+
+p {
+    font: 15px 'Franklin Gothic Medium';
+    color: firebrick;
+}
+
+button {
+    display: block;
+    margin-top: 20px;
+    padding: 8px 20px;
+    border-radius: 7px;
+    border: 6px double darkkhaki;
+    background-color: rgb(251, 251, 206);
+    font: 15px 'Franklin Gothic Medium';
+    cursor: pointer;
+}
+
+.boton {
+    display: flex;
+    justify-content: center;
+}
