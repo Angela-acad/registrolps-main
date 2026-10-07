@@ -79,7 +79,7 @@ cd registrolps
 La API queda disponible en:
 
 ```text
-http://localhost:8080
+http://localhost:8081
 ```
 
 ## 3) Flujo de login y registro

@@ -1,84 +1,89 @@
 package com.miproyecto.registrolps.service;
 
 import com.miproyecto.registrolps.entity.Pelicula;
+import com.miproyecto.registrolps.entity.Usuario;
 import com.miproyecto.registrolps.entity.enums.Estado;
 import com.miproyecto.registrolps.entity.enums.Valoracion;
 import com.miproyecto.registrolps.repository.PeliculaRepository;
+import com.miproyecto.registrolps.repository.UsuarioRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-import org.springframework.stereotype.Service;
-
 @Service
+@RequiredArgsConstructor
 public class PeliculaService {
 
     private final PeliculaRepository peliculaRepository;
+    private final UsuarioRepository usuarioRepository;
 
-    PeliculaService(PeliculaRepository peliculaRepository) {
-        this.peliculaRepository = peliculaRepository;
+    private Usuario obtenerUsuario(Long usuarioId) {
+        return usuarioRepository.findById(usuarioId)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
     }
 
-    public Pelicula crearPelicula(Pelicula pelicula) {
-        validarReglaValoracion(pelicula);
+    @Transactional(readOnly = true)
+    public List<Pelicula> listarPorUsuario(Long usuarioId) {
+        Usuario usuario = obtenerUsuario(usuarioId);
+        return peliculaRepository.findByUsuarioOrderByFechaCreacionDesc(usuario);
+    }
+
+    @Transactional(readOnly = true)
+    public Pelicula obtenerPorId(Long id, Long usuarioId) {
+        Usuario usuario = obtenerUsuario(usuarioId);
+        return peliculaRepository.findByIdAndUsuario(id, usuario)
+                .orElseThrow(() -> new RuntimeException("Pelicula no encontrada o no pertenece al usuario"));
+    }
+
+    @Transactional
+    public Pelicula crear(Pelicula pelicula, Long usuarioId) {
+        Usuario usuario = obtenerUsuario(usuarioId);
+        pelicula.setUsuario(usuario);
         return peliculaRepository.save(pelicula);
     }
 
-    private void validarReglaValoracion(Pelicula pelicula) {
-        boolean esFinalizadoOAbandonado = pelicula.getEstado() == Estado.Finalizado 
-                                       || pelicula.getEstado() == Estado.Abandonado;
-        if (!esFinalizadoOAbandonado) {
-            pelicula.setValoracion(null);
-        }
+    @Transactional
+    public Pelicula actualizar(Long id, Pelicula datos, Long usuarioId) {
+        Pelicula pelicula = obtenerPorId(id, usuarioId);
+        pelicula.setTitulo(datos.getTitulo());
+        pelicula.setActorPrincipal(datos.getActorPrincipal());
+        pelicula.setDuracionMinutos(datos.getDuracionMinutos());
+        pelicula.setGenero(datos.getGenero());
+        pelicula.setEstado(datos.getEstado());
+        pelicula.setValoracion(datos.getValoracion());
+        pelicula.setComentario(datos.getComentario());
+        return peliculaRepository.save(pelicula);
     }
 
-    public List<Pelicula> obtenerTodas() {
-        return peliculaRepository.findAll();
+    @Transactional
+    public void eliminar(Long id, Long usuarioId) {
+        Pelicula pelicula = obtenerPorId(id, usuarioId);
+        peliculaRepository.delete(pelicula);
     }
 
-    public Pelicula obtenerPorId(Long id) {
-        return peliculaRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("No se encontró la película con el ID: " + id));
-    }
-
-    public List<Pelicula> buscarPorFiltro(String filtro, String valor) {
+    @Transactional(readOnly = true)
+    public List<Pelicula> buscar(Long usuarioId, String campo, String valor) {
+        Usuario usuario = obtenerUsuario(usuarioId);
         if (valor == null || valor.isBlank()) {
-            return peliculaRepository.findAll();
+            return peliculaRepository.findByUsuarioOrderByFechaCreacionDesc(usuario);
         }
-
-        switch (filtro.toLowerCase()) {
-            case "actor":
-            case "actorprincipal":
-                return peliculaRepository.findByActorPrincipalContainingIgnoreCase(valor);
-            case "genero":
-                return peliculaRepository.findByGeneroContainingIgnoreCase(valor);
-            case "estado":
-                return peliculaRepository.findByEstado(Estado.valueOf(valor));
-            case "valoracion":
-                return peliculaRepository.findByValoracion(Valoracion.valueOf(valor));
-            case "titulo":
-            default:
-                return peliculaRepository.findByTituloContainingIgnoreCase(valor);
-        }
-    }
-
-    public Pelicula actualizarPelicula(Long id, Pelicula peliculaDetalles) {
-        Pelicula peliculaExistente = obtenerPorId(id);
-
-        peliculaExistente.setTitulo(peliculaDetalles.getTitulo());
-        peliculaExistente.setActorPrincipal(peliculaDetalles.getActorPrincipal());
-        peliculaExistente.setGenero(peliculaDetalles.getGenero());
-        peliculaExistente.setEstado(peliculaDetalles.getEstado());
-        peliculaExistente.setComentario(peliculaDetalles.getComentario());
-        peliculaExistente.setValoracion(peliculaDetalles.getValoracion());
-        validarReglaValoracion(peliculaExistente);
-
-        return peliculaRepository.save(peliculaExistente);
-    }
-
-    public void eliminarPelicula(Long id) {
-        if (!peliculaRepository.existsById(id)) {
-            throw new RuntimeException("No existe la película con el ID: " + id);
-        }
-        peliculaRepository.deleteById(id);
+        return switch (campo.toLowerCase()) {
+            case "titulo" -> peliculaRepository.findByUsuarioAndTituloContainingIgnoreCaseOrderByFechaCreacionDesc(usuario, valor);
+            case "estado" -> {
+                try {
+                    Estado estado = Estado.valueOf(valor);
+                    yield peliculaRepository.findByUsuarioAndEstadoOrderByFechaCreacionDesc(usuario, estado);
+                } catch (IllegalArgumentException e) { yield List.of(); }
+            }
+            case "valoracion" -> {
+                try {
+                    Valoracion valoracion = Valoracion.valueOf(valor);
+                    yield peliculaRepository.findByUsuarioAndValoracionOrderByFechaCreacionDesc(usuario, valoracion);
+                } catch (IllegalArgumentException e) { yield List.of(); }
+            }
+            default -> peliculaRepository.findByUsuarioOrderByFechaCreacionDesc(usuario);
+        };
     }
 }

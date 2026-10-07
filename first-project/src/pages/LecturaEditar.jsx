@@ -38,7 +38,7 @@ function LecturaEditar() {
     async function cargarLectura() {
       try {
         const response = await fetch(
-          `http://localhost:8080/api/lecturas/${id}?usuarioId=${usuario.id}`
+          `http://localhost:8081/api/lecturas/${id}?usuarioId=${usuario.id}`
         );
         if (!response.ok) throw new Error('No encontrada');
         const data = await response.json();
@@ -98,7 +98,7 @@ function LecturaEditar() {
 
     try {
       const response = await fetch(
-        `http://localhost:8080/api/lecturas/${id}?usuarioId=${usuario.id}`,
+        `http://localhost:8081/api/lecturas/${id}?usuarioId=${usuario.id}`,
         {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },

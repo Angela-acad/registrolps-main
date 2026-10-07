@@ -54,7 +54,7 @@ function LecturaNueva() {
 
     try {
       const response = await fetch(
-        `http://localhost:8080/api/lecturas?usuarioId=${usuario.id}`,
+        `http://localhost:8081/api/lecturas?usuarioId=${usuario.id}`,
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },

@@ -28,7 +28,7 @@ function LecturaDetalle() {
     async function cargarDetalle() {
       try {
         const response = await fetch(
-          `http://localhost:8080/api/lecturas/${id}?usuarioId=${usuario.id}`
+          `http://localhost:8081/api/lecturas/${id}?usuarioId=${usuario.id}`
         );
         if (!response.ok) throw new Error('Lectura no encontrada');
         const data = await response.json();
@@ -64,7 +64,7 @@ function LecturaDetalle() {
     setEliminando(true);
     try {
       const response = await fetch(
-        `http://localhost:8080/api/lecturas/${id}?usuarioId=${usuario.id}`,
+        `http://localhost:8081/api/lecturas/${id}?usuarioId=${usuario.id}`,
         { method: 'DELETE' }
       );
 

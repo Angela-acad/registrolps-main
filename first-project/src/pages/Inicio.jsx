@@ -32,7 +32,7 @@ function Inicio() {
         return { ok: false, mensaje: 'No hay cambios para guardar' };
       }
 
-      const response = await fetch(`http://localhost:8080/api/usuario/${usuario.id}`, {
+      const response = await fetch(`http://localhost:8081/api/usuario/${usuario.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body),
@@ -54,7 +54,7 @@ function Inicio() {
 
   const eliminarCuenta = async () => {
     try {
-      const response = await fetch(`http://localhost:8080/api/usuario/${usuario.id}`, {
+      const response = await fetch(`http://localhost:8081/api/usuario/${usuario.id}`, {
         method: 'DELETE',
       });
 

@@ -29,7 +29,7 @@ function Lectura() {
     async function cargarInicial() {
       try {
         const response = await fetch(
-          `http://localhost:8080/api/lecturas?usuarioId=${usuario.id}`
+          `http://localhost:8081/api/lecturas?usuarioId=${usuario.id}`
         );
         if (!response.ok) throw new Error('No se pudieron cargar las lecturas');
         const data = await response.json();
@@ -61,7 +61,7 @@ function Lectura() {
     setError('');
     try {
       const response = await fetch(
-        `http://localhost:8080/api/lecturas?usuarioId=${usuario.id}`
+        `http://localhost:8081/api/lecturas?usuarioId=${usuario.id}`
       );
       if (!response.ok) throw new Error('No se pudieron cargar las lecturas');
       const data = await response.json();
@@ -84,7 +84,7 @@ function Lectura() {
     setError('');
     try {
       const response = await fetch(
-        `http://localhost:8080/api/lecturas/buscar?usuarioId=${usuario.id}&campo=${campo}&valor=${encodeURIComponent(valor)}`
+        `http://localhost:8081/api/lecturas/buscar?usuarioId=${usuario.id}&campo=${campo}&valor=${encodeURIComponent(valor)}`
       );
       if (!response.ok) throw new Error('Error en la búsqueda');
       const data = await response.json();
