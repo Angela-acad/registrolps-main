@@ -12,6 +12,9 @@ import Pelicula from './pages/Pelicula';
 import PeliculaNueva from './pages/PeliculaNueva';
 import PeliculaDetalle from './pages/PeliculaDetalle';
 import PeliculaEditar from './pages/PeliculaEditar';
+import Serie from './pages/Serie';
+import SerieNueva from './pages/SerieNueva';
+import SerieDetalle from './pages/SerieDetalle';
 
 function App() {
   return (
@@ -33,6 +36,11 @@ function App() {
         <Route path="/pelicula/nueva" element={<PeliculaNueva />} />
         <Route path="/pelicula/:id/editar" element={<PeliculaEditar />} />
         <Route path="/pelicula/:id" element={<PeliculaDetalle />} />
+
+        {/* SERIE */}
+        <Route path="/serie" element={<Serie />} />
+        <Route path="/serie/nueva" element={<SerieNueva />} />
+        <Route path="/serie/:id" element={<SerieDetalle />} />
 
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>

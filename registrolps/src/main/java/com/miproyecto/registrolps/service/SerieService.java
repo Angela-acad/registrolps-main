@@ -1,24 +1,33 @@
 package com.miproyecto.registrolps.service;
 
 import com.miproyecto.registrolps.entity.Serie;
+import com.miproyecto.registrolps.entity.Usuario;
 import com.miproyecto.registrolps.entity.enums.Estado;
 import com.miproyecto.registrolps.entity.enums.Valoracion;
 import com.miproyecto.registrolps.repository.SerieRepository;
+import com.miproyecto.registrolps.repository.UsuarioRepository;
+import lombok.RequiredArgsConstructor;
 
 import java.util.List;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@RequiredArgsConstructor
 public class SerieService {
 
     private final SerieRepository serieRepository;
+    private final UsuarioRepository usuarioRepository;
 
-    SerieService(SerieRepository serieRepository) {
-        this.serieRepository = serieRepository;
+    private Usuario obtenerUsuario(Long usuarioId) {
+        return usuarioRepository.findById(usuarioId)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
     }
 
-    public Serie crearSerie(Serie serie) {
+    @Transactional
+    public Serie crearSerie(Serie serie, Long usuarioId) {
+        serie.setUsuario(obtenerUsuario(usuarioId));
         validarReglaValoracion(serie);
         return serieRepository.save(serie);
     }
@@ -31,38 +40,51 @@ public class SerieService {
         }
     }
 
-    public List<Serie> obtenerTodas() {
-    return serieRepository.findAll();
+    @Transactional(readOnly = true)
+    public List<Serie> obtenerTodas(Long usuarioId) {
+        return serieRepository.findByUsuarioOrderByFechaCreacionDesc(obtenerUsuario(usuarioId));
     }
 
-    public Serie obtenerPorId(Long id) {
-        return serieRepository.findById(id)
+    @Transactional(readOnly = true)
+    public Serie obtenerPorId(Long id, Long usuarioId) {
+        return serieRepository.findByIdAndUsuario(id, obtenerUsuario(usuarioId))
                 .orElseThrow(() -> new RuntimeException("No se encontró la serie con el ID: " + id));
     }
 
-    public List<Serie> buscarPorFiltro(String filtro, String valor) {
+    @Transactional(readOnly = true)
+    public List<Serie> buscarPorFiltro(Long usuarioId, String filtro, String valor) {
+        Usuario usuario = obtenerUsuario(usuarioId);
         if (valor == null || valor.isBlank()) {
-            return serieRepository.findAll();
+            return serieRepository.findByUsuarioOrderByFechaCreacionDesc(usuario);
         }
 
         switch (filtro.toLowerCase()) {
             case "actor":
             case "actorprincipal":
-                return serieRepository.findByActorPrincipalContainingIgnoreCase(valor);
+                return serieRepository.findByUsuarioAndActorPrincipalContainingIgnoreCaseOrderByFechaCreacionDesc(usuario, valor);
             case "genero":
-                return serieRepository.findByGeneroContainingIgnoreCase(valor);
+                return serieRepository.findByUsuarioAndGeneroContainingIgnoreCaseOrderByFechaCreacionDesc(usuario, valor);
             case "estado":
-                return serieRepository.findByEstado(Estado.valueOf(valor));
+                try {
+                    return serieRepository.findByUsuarioAndEstadoOrderByFechaCreacionDesc(usuario, Estado.valueOf(valor));
+                } catch (IllegalArgumentException e) {
+                    return List.of();
+                }
             case "valoracion":
-                return serieRepository.findByValoracion(Valoracion.valueOf(valor));
+                try {
+                    return serieRepository.findByUsuarioAndValoracionOrderByFechaCreacionDesc(usuario, Valoracion.valueOf(valor));
+                } catch (IllegalArgumentException e) {
+                    return List.of();
+                }
             case "titulo":
             default:
-                return serieRepository.findByTituloContainingIgnoreCase(valor);
+                return serieRepository.findByUsuarioAndTituloContainingIgnoreCaseOrderByFechaCreacionDesc(usuario, valor);
         }
     }
 
-    public Serie actualizarSerie(Long id, Serie serieDetalles) {
-    Serie serieExistente = obtenerPorId(id);
+    @Transactional
+    public Serie actualizarSerie(Long id, Serie serieDetalles, Long usuarioId) {
+    Serie serieExistente = obtenerPorId(id, usuarioId);
 
     serieExistente.setTitulo(serieDetalles.getTitulo());
     serieExistente.setActorPrincipal(serieDetalles.getActorPrincipal());
@@ -76,10 +98,8 @@ public class SerieService {
     return serieRepository.save(serieExistente);
     }
 
-    public void eliminarSerie(Long id) {
-    if (!serieRepository.existsById(id)) {
-        throw new RuntimeException("No existe la serie con el ID: " + id);
-    }
-    serieRepository.deleteById(id);
+    @Transactional
+    public void eliminarSerie(Long id, Long usuarioId) {
+        serieRepository.delete(obtenerPorId(id, usuarioId));
     }
 }

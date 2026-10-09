@@ -20,37 +20,38 @@ public class SerieController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Serie>> obtenerTodas() {
-        return ResponseEntity.ok(serieService.obtenerTodas());
+    public ResponseEntity<List<Serie>> obtenerTodas(@RequestParam Long usuarioId) {
+        return ResponseEntity.ok(serieService.obtenerTodas(usuarioId));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Serie> obtenerPorId(@PathVariable Long id) {
-        return ResponseEntity.ok(serieService.obtenerPorId(id));
+    public ResponseEntity<Serie> obtenerPorId(@PathVariable Long id, @RequestParam Long usuarioId) {
+        return ResponseEntity.ok(serieService.obtenerPorId(id, usuarioId));
     }
 
     @GetMapping("/buscar")
     public ResponseEntity<List<Serie>> buscarPorFiltro(
+            @RequestParam Long usuarioId,
             @RequestParam(defaultValue = "titulo") String filtro,
             @RequestParam(required = false) String valor) {
-        return ResponseEntity.ok(serieService.buscarPorFiltro(filtro, valor));
+        return ResponseEntity.ok(serieService.buscarPorFiltro(usuarioId, filtro, valor));
     }
 
     @PostMapping
-    public ResponseEntity<Serie> crearSerie(@RequestBody Serie serie) {
-        Serie nuevaSerie = serieService.crearSerie(serie);
+    public ResponseEntity<Serie> crearSerie(@RequestBody Serie serie, @RequestParam Long usuarioId) {
+        Serie nuevaSerie = serieService.crearSerie(serie, usuarioId);
         return new ResponseEntity<>(nuevaSerie, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Serie> actualizarSerie(@PathVariable Long id, @RequestBody Serie serie) {
-        Serie serieActualizada = serieService.actualizarSerie(id, serie);
+    public ResponseEntity<Serie> actualizarSerie(@PathVariable Long id, @RequestBody Serie serie, @RequestParam Long usuarioId) {
+        Serie serieActualizada = serieService.actualizarSerie(id, serie, usuarioId);
         return ResponseEntity.ok(serieActualizada);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> eliminarSerie(@PathVariable Long id) {
-        serieService.eliminarSerie(id);
+    public ResponseEntity<Void> eliminarSerie(@PathVariable Long id, @RequestParam Long usuarioId) {
+        serieService.eliminarSerie(id, usuarioId);
         return ResponseEntity.noContent().build();
     }
 }

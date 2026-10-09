@@ -1,4 +1,4 @@
-function BarraBusqueda({ campo, valor, onCampoChange, onValorChange, onBuscar, onLimpiar }) {
+function BarraBusqueda({ campo, valor, onCampoChange, onValorChange, onBuscar, onLimpiar, opcionesCampo }) {
   const handleSubmit = (e) => {
     e.preventDefault();
     onBuscar();
@@ -15,9 +15,13 @@ function BarraBusqueda({ campo, valor, onCampoChange, onValorChange, onBuscar, o
           onChange={(e) => onCampoChange(e.target.value)}
           aria-label="Campo de búsqueda"
         >
-          <option value="titulo">Título</option>
-          <option value="estado">Estado</option>
-          <option value="valoracion">Valoración</option>
+          {(opcionesCampo ?? [
+            { valor: 'titulo', etiqueta: 'Título' },
+            { valor: 'estado', etiqueta: 'Estado' },
+            { valor: 'valoracion', etiqueta: 'Valoración' },
+          ]).map((opcion) => (
+            <option key={opcion.valor} value={opcion.valor}>{opcion.etiqueta}</option>
+          ))}
         </select>
 
         <input
