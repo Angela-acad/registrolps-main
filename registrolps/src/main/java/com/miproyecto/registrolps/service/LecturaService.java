@@ -2,45 +2,54 @@ package com.miproyecto.registrolps.service;
 
 import com.miproyecto.registrolps.entity.Lectura;
 import com.miproyecto.registrolps.entity.Usuario;
+import com.miproyecto.registrolps.entity.enums.Disponibilidad;
 import com.miproyecto.registrolps.entity.enums.Estado;
 import com.miproyecto.registrolps.entity.enums.Valoracion;
 import com.miproyecto.registrolps.repository.LecturaRepository;
 import com.miproyecto.registrolps.repository.UsuarioRepository;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
-@RequiredArgsConstructor
 public class LecturaService {
 
     private final LecturaRepository lecturaRepository;
     private final UsuarioRepository usuarioRepository;
 
-    private Usuario obtenerUsuario(Long usuarioId) {
-        return usuarioRepository.findById(usuarioId)
+    public LecturaService(LecturaRepository lecturaRepository,
+                          UsuarioRepository usuarioRepository) {
+        this.lecturaRepository = lecturaRepository;
+        this.usuarioRepository = usuarioRepository;
+    }
+
+    private Usuario obtenerUsuarioActivo(Long usuarioId) {
+        return usuarioRepository
+                .findByIdAndDisponibilidad(usuarioId, Disponibilidad.existe)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
     }
 
     @Transactional(readOnly = true)
     public List<Lectura> listarPorUsuario(Long usuarioId) {
-        Usuario usuario = obtenerUsuario(usuarioId);
-        return lecturaRepository.findByUsuarioOrderByFechaCreacionDesc(usuario);
+        Usuario usuario = obtenerUsuarioActivo(usuarioId);
+        return lecturaRepository.findByUsuarioAndDisponibilidadOrderByFechaCreacionDesc(
+                usuario, Disponibilidad.existe);
     }
 
     @Transactional(readOnly = true)
     public Lectura obtenerPorId(Long id, Long usuarioId) {
-        Usuario usuario = obtenerUsuario(usuarioId);
-        return lecturaRepository.findByIdAndUsuario(id, usuario)
-                .orElseThrow(() -> new RuntimeException("Lectura no encontrada o no pertenece al usuario"));
+        Usuario usuario = obtenerUsuarioActivo(usuarioId);
+        return lecturaRepository
+                .findByIdAndUsuarioAndDisponibilidad(id, usuario, Disponibilidad.existe)
+                .orElseThrow(() -> new RuntimeException("Lectura no encontrada"));
     }
 
     @Transactional
     public Lectura crear(Lectura lectura, Long usuarioId) {
-        Usuario usuario = obtenerUsuario(usuarioId);
+        Usuario usuario = obtenerUsuarioActivo(usuarioId);
         lectura.setUsuario(usuario);
+        lectura.setDisponibilidad(Disponibilidad.existe);
         return lecturaRepository.save(lectura);
     }
 
@@ -60,27 +69,32 @@ public class LecturaService {
         return lecturaRepository.save(lectura);
     }
 
+    /** Soft delete */
     @Transactional
     public void eliminar(Long id, Long usuarioId) {
         Lectura lectura = obtenerPorId(id, usuarioId);
-        lecturaRepository.delete(lectura);
+        lectura.setDisponibilidad(Disponibilidad.inexistente);
+        lecturaRepository.save(lectura);
     }
 
     @Transactional(readOnly = true)
     public List<Lectura> buscar(Long usuarioId, String campo, String valor) {
-        Usuario usuario = obtenerUsuario(usuarioId);
+        Usuario usuario = obtenerUsuarioActivo(usuarioId);
 
         if (valor == null || valor.isBlank()) {
-            return lecturaRepository.findByUsuarioOrderByFechaCreacionDesc(usuario);
+            return listarPorUsuario(usuarioId);
         }
 
         return switch (campo.toLowerCase()) {
             case "titulo" -> lecturaRepository
-                    .findByUsuarioAndTituloContainingIgnoreCaseOrderByFechaCreacionDesc(usuario, valor);
+                    .findByUsuarioAndDisponibilidadAndTituloContainingIgnoreCaseOrderByFechaCreacionDesc(
+                            usuario, Disponibilidad.existe, valor);
             case "estado" -> {
                 try {
                     Estado estado = Estado.valueOf(valor);
-                    yield lecturaRepository.findByUsuarioAndEstadoOrderByFechaCreacionDesc(usuario, estado);
+                    yield lecturaRepository
+                            .findByUsuarioAndDisponibilidadAndEstadoOrderByFechaCreacionDesc(
+                                    usuario, Disponibilidad.existe, estado);
                 } catch (IllegalArgumentException e) {
                     yield List.of();
                 }
@@ -88,12 +102,14 @@ public class LecturaService {
             case "valoracion" -> {
                 try {
                     Valoracion valoracion = Valoracion.valueOf(valor);
-                    yield lecturaRepository.findByUsuarioAndValoracionOrderByFechaCreacionDesc(usuario, valoracion);
+                    yield lecturaRepository
+                            .findByUsuarioAndDisponibilidadAndValoracionOrderByFechaCreacionDesc(
+                                    usuario, Disponibilidad.existe, valoracion);
                 } catch (IllegalArgumentException e) {
                     yield List.of();
                 }
             }
-            default -> lecturaRepository.findByUsuarioOrderByFechaCreacionDesc(usuario);
+            default -> listarPorUsuario(usuarioId);
         };
     }
 }

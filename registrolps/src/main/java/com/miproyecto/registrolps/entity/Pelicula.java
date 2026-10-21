@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 
 import com.miproyecto.registrolps.entity.enums.Estado;
 import com.miproyecto.registrolps.entity.enums.Valoracion;
+import com.miproyecto.registrolps.entity.enums.Disponibilidad;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -37,7 +38,7 @@ public class Pelicula {
 
     private String genero;
 
-     @Column(nullable = false)
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private Estado estado;
 
@@ -51,6 +52,10 @@ public class Pelicula {
     private LocalDateTime fechaCreacion;
 
     private LocalDateTime fechaActualizacion;
+
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private Disponibilidad disponibilidad = Disponibilidad.existe;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "usuario_id", nullable = false)

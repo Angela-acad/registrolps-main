@@ -148,25 +148,36 @@
   padding: 20px;
   z-index: 20;
   box-shadow: 0 12px 32px rgba(23, 63, 58, 0.12);
+  box-sizing: border-box;
+}
+
+.perfil-desplegable .panel-kicker {
+  margin: 0 0 14px;
+}
+
+.perfil-datos {
+  margin-bottom: 4px;
 }
 
 .perfil-datos p {
   margin: 0 0 8px;
   color: #173f3a;
   font-size: 14px;
+  line-height: 1.4;
 }
 
 .perfil-datos strong {
   font-weight: 700;
+  margin-right: 6px;
 }
 
-.field-group {
+.perfil-desplegable .field-group {
   border: 0;
   padding: 0;
   margin: 0 0 16px;
 }
 
-.field-group > label {
+.perfil-desplegable .field-group > label {
   display: block;
   color: #173f3a;
   font-weight: 700;
@@ -199,9 +210,9 @@
   margin-top: 16px;
 }
 
-.btn-primario,
-.btn-secundario,
-.btn-peligro {
+.perfil-acciones .btn-primario,
+.perfil-acciones .btn-secundario,
+.perfil-acciones .btn-peligro {
   flex: 1;
   border: 0;
   padding: 12px 10px;
@@ -236,8 +247,34 @@
   color: #fffdf9;
 }
 
-.btn-peligro:hover {
+.btn-peligro:hover:not(:disabled) {
   background: #9a3b34;
+}
+
+.perfil-acciones button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.btn-cerrar-sesion {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  margin-top: 12px;
+  border: 1px solid #c9c0b2;
+  padding: 12px 10px;
+  background: #fffdf9;
+  color: #173f3a;
+  font: inherit;
+  font-weight: 700;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.btn-cerrar-sesion:hover {
+  background: #e8eee8;
+  border-color: #173f3a;
 }
 
 .form-message {
@@ -335,25 +372,6 @@
   .perfil-desplegable {
     right: auto;
     left: 0;
-    width: 100%;
+    width: min(280px, 100%);
   }
-
-  .btn-cerrar-sesion {
-  width: 100%;
-  margin-top: 12px;
-  border: 1px solid #c9c0b2;
-  padding: 12px 10px;
-  background: #fffdf9;
-  color: #173f3a;
-  font: inherit;
-  font-weight: 700;
-  font-size: 13px;
-  cursor: pointer;
-  transition: background 0.2s, border-color 0.2s;
-}
-
-.btn-cerrar-sesion:hover {
-  background: #e8eee8;
-  border-color: #173f3a;
-}
 }
