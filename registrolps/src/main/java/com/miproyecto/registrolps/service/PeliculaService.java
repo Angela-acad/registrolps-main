@@ -54,6 +54,7 @@ public class PeliculaService {
         pelicula.setEstado(datos.getEstado());
         pelicula.setValoracion(datos.getValoracion());
         pelicula.setComentario(datos.getComentario());
+        pelicula.setPortadaUrl(datos.getPortadaUrl());
         return peliculaRepository.save(pelicula);
     }
 

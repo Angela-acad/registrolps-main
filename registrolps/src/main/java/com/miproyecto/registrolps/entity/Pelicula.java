@@ -45,6 +45,7 @@ public class Pelicula {
     private Valoracion valoracion;
 
     private String comentario;
+    private String portadaUrl;
 
     @Column(nullable = false, updatable = false)
     private LocalDateTime fechaCreacion;

@@ -9,10 +9,18 @@ function SerieNueva() {
     const guardado = localStorage.getItem('usuario');
     return guardado ? JSON.parse(guardado) : null;
   });
+
   const [formData, setFormData] = useState({
-    titulo: '', actorPrincipal: '', numeroCapitulos: '', genero: '',
-    estado: '', valoracion: '', comentario: '',
+    titulo: '',
+    actorPrincipal: '',
+    numeroCapitulos: '',
+    genero: '',
+    estado: '',
+    valoracion: '',
+    comentario: '',
+    portadaUrl: '', // <-- AÑADIDO
   });
+
   const [cargando, setCargando] = useState(false);
   const [mensaje, setMensaje] = useState({ texto: '', tipo: '' });
 
@@ -29,12 +37,14 @@ function SerieNueva() {
     event.preventDefault();
     setCargando(true);
     setMensaje({ texto: '', tipo: '' });
+
     const body = {
       ...formData,
       actorPrincipal: formData.actorPrincipal || null,
       numeroCapitulos: formData.numeroCapitulos ? Number(formData.numeroCapitulos) : null,
       valoracion: formData.valoracion || null,
       comentario: formData.comentario || null,
+      portadaUrl: formData.portadaUrl || null, // <-- AÑADIDO
     };
 
     try {
@@ -43,12 +53,14 @@ function SerieNueva() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body),
       });
+
       if (!response.ok) {
         const data = await response.json().catch(() => ({}));
         setMensaje({ texto: data.mensaje || 'No se pudo crear la serie', tipo: 'error' });
         setCargando(false);
         return;
       }
+
       navigate('/serie');
     } catch {
       setMensaje({ texto: 'Error de conexión con el servidor', tipo: 'error' });
@@ -67,6 +79,7 @@ function SerieNueva() {
         <div className="intro-line" />
         <p className="intro-note">Los campos con * son obligatorios</p>
       </section>
+
       <section className="serie-panel">
         <div className="panel-top">
           <div className="panel-heading">
@@ -78,6 +91,7 @@ function SerieNueva() {
             <button type="button" className="btn-secundario" onClick={() => navigate('/')}>Inicio</button>
           </div>
         </div>
+
         <FormularioSerie formData={formData} onChange={handleChange} onSubmit={handleSubmit} cargando={cargando} mensaje={mensaje} />
       </section>
     </div>

@@ -104,3 +104,49 @@
   .formulario-serie .submit-button { grid-column: 1; }
   .detalle-serie .detalle-fila { grid-template-columns: 1fr; gap: 5px; }
 }
+
+/* ===== NUEVO DISEÑO PARA DETALLE (IMAGEN AL LADO) ===== */
+.detalle-contenido {
+  display: flex;
+  flex-direction: row;
+  gap: 30px;
+  align-items: center; /* ¡AQUÍ ESTÁ LA MAGIA! Centra la imagen verticalmente */
+}
+
+/* Forzamos a que la imagen mida siempre 150px */
+.detalle-imagen {
+  flex-shrink: 0;
+  width: 150px;
+}
+
+.detalle-imagen img {
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+  object-fit: cover;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* El texto ocupa el resto del espacio */
+.detalle-contenido .detalle-lista {
+  flex-grow: 1; 
+  width: 100%;
+  min-width: 0; 
+}
+
+/* Corregimos las filas de datos para que no se aprieten */
+.detalle-contenido .detalle-fila {
+  grid-template-columns: 140px 1fr; 
+}
+
+/* En pantallas de celular se pone uno encima del otro */
+@media (max-width: 600px) {
+  .detalle-contenido {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .detalle-imagen {
+    width: 200px;
+  }
+}

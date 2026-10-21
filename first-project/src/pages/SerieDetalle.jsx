@@ -13,6 +13,7 @@ function SerieDetalle() {
   const [serie, setSerie] = useState(null);
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState('');
+  const [eliminando, setEliminando] = useState(false); // <-- NUEVO
 
   useEffect(() => {
     if (!usuario) {
@@ -38,6 +39,29 @@ function SerieDetalle() {
     return () => { cancelado = true; };
   }, [usuario, navigate, id]);
 
+  // NUEVA FUNCIÓN PARA ELIMINAR
+  const handleEliminar = async () => {
+    const confirmar = window.confirm('¿Estás seguro de que quieres eliminar esta serie?');
+    if (!confirmar) return;
+
+    setEliminando(true);
+    try {
+      const response = await fetch(`http://localhost:8081/api/series/${id}?usuarioId=${usuario.id}`, {
+        method: 'DELETE',
+      });
+
+      if (response.ok || response.status === 204) {
+        navigate('/serie');
+      } else {
+        setError('No se pudo eliminar el registro');
+        setEliminando(false);
+      }
+    } catch {
+      setError('Error de conexión con el servidor');
+      setEliminando(false);
+    }
+  };
+
   if (!usuario) return null;
 
   return (
@@ -62,7 +86,9 @@ function SerieDetalle() {
         </div>
         {cargando && <p className="estado-msg">Cargando detalle…</p>}
         {!cargando && error && <p className="form-message error-message">{error}</p>}
-        {!cargando && !error && serie && <DetalleSerie serie={serie} />}
+        {!cargando && !error && serie && (
+          <DetalleSerie serie={serie} onEliminar={handleEliminar} eliminando={eliminando} />
+        )}
       </section>
     </div>
   );

@@ -12,9 +12,12 @@ import Pelicula from './pages/Pelicula';
 import PeliculaNueva from './pages/PeliculaNueva';
 import PeliculaDetalle from './pages/PeliculaDetalle';
 import PeliculaEditar from './pages/PeliculaEditar';
+
+// --- IMPORTS DE SERIE ---
 import Serie from './pages/Serie';
 import SerieNueva from './pages/SerieNueva';
 import SerieDetalle from './pages/SerieDetalle';
+import SerieEditar from './pages/SerieEditar'; // <-- IMPORT AÑADIDO
 
 function App() {
   return (
@@ -31,7 +34,7 @@ function App() {
         <Route path="/lectura/:id/editar" element={<LecturaEditar />} />
         <Route path="/lectura/:id" element={<LecturaDetalle />} />
 
-        {/* PELÍCULA (las 4 rutas reales) */}
+        {/* PELÍCULA */}
         <Route path="/pelicula" element={<Pelicula />} />
         <Route path="/pelicula/nueva" element={<PeliculaNueva />} />
         <Route path="/pelicula/:id/editar" element={<PeliculaEditar />} />
@@ -40,6 +43,7 @@ function App() {
         {/* SERIE */}
         <Route path="/serie" element={<Serie />} />
         <Route path="/serie/nueva" element={<SerieNueva />} />
+        <Route path="/serie/:id/editar" element={<SerieEditar />} /> {/* <-- RUTA AÑADIDA */}
         <Route path="/serie/:id" element={<SerieDetalle />} />
 
         <Route path="*" element={<Navigate to="/" replace />} />

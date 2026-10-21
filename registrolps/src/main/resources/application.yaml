@@ -15,3 +15,13 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQLDialect
+
+  # Configuración para subida de archivos (dentro de spring)
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 5MB
+
+# Configuración personalizada para la carpeta de subidas (fuera de spring, al mismo nivel)
+file:
+  upload-dir: uploads

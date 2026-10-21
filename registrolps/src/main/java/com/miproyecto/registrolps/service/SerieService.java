@@ -93,13 +93,15 @@ public class SerieService {
     serieExistente.setNumeroCapitulos(serieDetalles.getNumeroCapitulos());
     serieExistente.setComentario(serieDetalles.getComentario());
     serieExistente.setValoracion(serieDetalles.getValoracion());
+    serieExistente.setPortadaUrl(serieDetalles.getPortadaUrl());
     validarReglaValoracion(serieExistente);
 
     return serieRepository.save(serieExistente);
     }
 
-    @Transactional
+       @Transactional
     public void eliminarSerie(Long id, Long usuarioId) {
-        serieRepository.delete(obtenerPorId(id, usuarioId));
+        Serie serie = obtenerPorId(id, usuarioId);
+        serieRepository.delete(serie);
     }
 }

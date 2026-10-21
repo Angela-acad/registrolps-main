@@ -1,4 +1,33 @@
 function FormularioPelicula({ formData, onChange, onSubmit, cargando, mensaje, textoBoton = 'Añadir' }) {
+  
+  const handleFileChange = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    // Creamos un objeto FormData para enviar el archivo
+    const data = new FormData();
+    data.append('archivo', file);
+
+    try {
+      // Subimos la imagen al backend
+      const response = await fetch('http://localhost:8081/api/upload', {
+        method: 'POST',
+        body: data,
+      });
+
+      if (!response.ok) throw new Error('Error al subir la imagen');
+
+      const result = await response.json();
+      
+      // Actualizamos el formData con la URL devuelta por el backend
+      // Simulamos un evento similar al de los inputs de texto
+      onChange({ target: { name: 'portadaUrl', value: result.url } });
+
+    } catch (error) {
+       alert(`No se pudo subir la imagen: ${error.message}`);
+    }
+  };
+
   return (
     <form className="formulario-pelicula" onSubmit={onSubmit}>
       <div className="field-group">
@@ -51,6 +80,15 @@ function FormularioPelicula({ formData, onChange, onSubmit, cargando, mensaje, t
         <input id="duracionMinutos" type="number" name="duracionMinutos" min="0" value={formData.duracionMinutos} onChange={onChange} />
       </div>
 
+      {/* NUEVO: Campo para subir la portada */}
+      <div className="field-group">
+        <label htmlFor="portada">Portada (imagen)</label>
+        <input id="portada" type="file" accept="image/*" onChange={handleFileChange} />
+        {formData.portadaUrl && (
+          <p style={{ fontSize: '12px', color: 'green' }}>✓ Imagen subida correctamente</p>
+        )}
+      </div>
+
       <div className="field-group">
         <label htmlFor="comentario">Comentario</label>
         <textarea id="comentario" name="comentario" rows="4" value={formData.comentario} onChange={onChange} />
@@ -69,4 +107,5 @@ function FormularioPelicula({ formData, onChange, onSubmit, cargando, mensaje, t
     </form>
   );
 }
+
 export default FormularioPelicula;

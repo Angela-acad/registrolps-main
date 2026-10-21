@@ -44,7 +44,8 @@ public class Serie {
     private Valoracion valoracion;
 
     private String comentario;
-
+    private String portadaUrl;
+    
     @Column(updatable = false)
     private LocalDateTime fechaCreacion;
 

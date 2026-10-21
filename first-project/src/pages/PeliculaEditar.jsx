@@ -20,6 +20,7 @@ function PeliculaEditar() {
     valoracion: '',
     duracionMinutos: '',
     comentario: '',
+    portadaUrl: '',
   });
 
   const [cargandoDatos, setCargandoDatos] = useState(true);
@@ -90,6 +91,7 @@ function PeliculaEditar() {
       duracionMinutos:
         formData.duracionMinutos !== '' ? Number(formData.duracionMinutos) : null,
       comentario: formData.comentario || null,
+      portadaUrl: formData.portadaUrl || null,
     };
 
     try {
