@@ -3,6 +3,7 @@ package com.miproyecto.registrolps.entity;
 import java.time.LocalDateTime;
 
 import com.miproyecto.registrolps.entity.enums.TipoUsuario;
+import com.miproyecto.registrolps.entity.enums.Disponibilidad;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -39,6 +40,10 @@ public class Usuario {
     private LocalDateTime fechaCreacion;
 
     private LocalDateTime fechaActualizacion;
+
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private Disponibilidad disponibilidad = Disponibilidad.existe;
 
     @PrePersist
     protected void onCreate() {

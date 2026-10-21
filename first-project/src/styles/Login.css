@@ -1,68 +1,340 @@
-
-body {
-    background-color: khaki;
+.login-page {
+  min-height: 100svh;
+  display: grid;
+  grid-template-columns: minmax(280px, 0.85fr) minmax(420px, 1.15fr);
+  background: #f5f1e9;
 }
 
-.contenedor {
-    width: 400px;
-    background-color:beige;
-    border-radius: 20px;
-    padding: 5px 50px 50px; 
-    margin: auto; 
-}
-
-h1 {
-    color:darkkhaki;
-    text-align: center;
-    font-family: 'Franklin Gothic Medium';
-    font-size: 40px;
-}
-
-label {
-    margin: 15px 0 5px;
-    display: block;
-    font-family: 'Trebuchet MS';
-}
-
-input {
-    padding: 5px;
-    width: 100%;
-    display: block;
-}
-
-input[type="radio"] {
-  display: inline-block;
-  width: auto;
-  margin-right: 4px;
-  accent-color: darkkhaki;
-  cursor: pointer;
-}
-
-.radio {
+.login-intro {
+  padding: clamp(40px, 8vw, 112px);
   display: flex;
+  flex-direction: column;
   justify-content: center;
+  background: #173f3a;
+  color: #f4f0e7;
+  position: relative;
+  overflow: hidden;
+}
+
+.login-intro::after {
+  content: '';
+  position: absolute;
+  width: 360px;
+  height: 360px;
+  border: 1px solid #d3a857;
+  border-radius: 50%;
+  right: -170px;
+  bottom: -130px;
+  opacity: 0.55;
+}
+
+.eyebrow,
+.panel-kicker {
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.eyebrow {
+  color: #e2b967;
+  margin-bottom: 28px;
+}
+
+.login-intro h1 {
+  color: #f4f0e7;
+  font-size: clamp(42px, 5vw, 78px);
+  line-height: 0.98;
+  letter-spacing: -0.04em;
+  margin: 0;
+  max-width: 610px;
+}
+
+.login-intro > p:not(.intro-note) {
+  max-width: 380px;
+  margin-top: 28px;
+  color: #c7d4cd;
+  font-size: 17px;
+}
+
+.intro-line {
+  width: 64px;
+  height: 2px;
+  background: #e2b967;
+  margin: 44px 0 18px;
+}
+
+.intro-note {
+  color: #9cb5ac;
+  font-size: 13px;
+}
+
+.login-panel {
+  align-self: center;
+  width: min(520px, calc(100% - 48px));
+  margin: 48px auto;
+}
+
+.panel-heading {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  margin-bottom: 42px;
+}
+
+.panel-mark {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  background: #e2b967;
+  color: #173f3a;
+  font-size: 24px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.panel-kicker {
+  color: #8a8071;
+  margin: 0 0 8px;
+}
+
+.panel-heading h2 {
+  color: #173f3a;
+  font-size: 36px;
+  letter-spacing: -0.04em;
+  margin: 0;
+}
+
+.field-group {
+  border: 0;
+  padding: 0;
+  margin: 0 0 25px;
+  min-width: 0;
+}
+
+.field-group > label,
+legend {
+  display: block;
+  color: #173f3a;
+  font-weight: 700;
+  font-size: 13px;
+  margin-bottom: 9px;
+}
+
+input[type='text'],
+input[type='password'] {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 14px 15px;
+  border: 1px solid #c9c0b2;
+  background: #fffdf9;
+  color: #173f3a;
+  font: inherit;
+  font-size: 15px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+input:focus {
+  outline: none;
+  border-color: #173f3a;
+  box-shadow: 0 0 0 3px rgba(23, 63, 58, 0.12);
+}
+
+input[aria-invalid='true'] {
+  border-color: #b4473f;
+}
+
+.role-options {
+  margin-top: 0;
+}
+
+.role-options legend {
+  padding: 0;
+}
+
+.role-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   gap: 10px;
-  margin-top: 15px;
-  font-family: 'Trebuchet MS';
 }
 
-p {
-    font: 15px 'Franklin Gothic Medium';
-    color: firebrick;
+.role-option {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 14px;
+  border: 1px solid #c9c0b2;
+  background: #fffdf9;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
 }
 
-button {
-    display: block;
-    margin-top: 20px;
-    padding: 8px 20px;
-    border-radius: 7px;
-    border: 6px double darkkhaki;
-    background-color: rgb(251, 251, 206);
-    font: 15px 'Franklin Gothic Medium';
-    cursor: pointer;
+.role-option.selected {
+  border-color: #173f3a;
+  background: #e8eee8;
 }
 
-.boton {
-    display: flex;
-    justify-content: center;
+.role-option input {
+  accent-color: #173f3a;
+  margin-top: 3px;
 }
+
+.role-option span {
+  display: grid;
+  gap: 4px;
+}
+
+.role-option strong {
+  color: #173f3a;
+  font-size: 13px;
+}
+
+.role-option small {
+  color: #8a8071;
+  font-size: 11px;
+}
+
+.submit-button {
+  width: 100%;
+  border: 0;
+  padding: 16px 20px;
+  background: #173f3a;
+  color: #fffdf9;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: background 0.2s, transform 0.2s;
+}
+
+.submit-button:hover:not(:disabled) {
+  background: #265d54;
+  transform: translateY(-2px);
+}
+
+.submit-button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.submit-button:focus-visible {
+  outline: 3px solid #e2b967;
+  outline-offset: 3px;
+}
+
+.error {
+  display: block;
+  color: #b4473f;
+  font-size: 12px;
+  margin-top: 7px;
+}
+
+.form-message {
+  font-size: 13px;
+  margin: 0 0 16px;
+}
+
+.error-message {
+  color: #b4473f;
+}
+
+.panel-footer {
+  color: #8a8071;
+  font-size: 13px;
+  margin-top: 34px;
+  border-top: 1px solid #d8d0c3;
+  padding-top: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.panel-footer p {
+  margin: 0;
+}
+
+.btn-registro {
+  border: 1px solid #c9c0b2;
+  padding: 10px 16px;
+  background: #fffdf9;
+  color: #173f3a;
+  font: inherit;
+  font-weight: 700;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.btn-registro:hover {
+  background: #e8eee8;
+  border-color: #173f3a;
+}
+
+@media (max-width: 760px) {
+  .login-page {
+    grid-template-columns: 1fr;
+  }
+
+  .login-intro {
+    padding: 44px 28px 48px;
+    min-height: 330px;
+  }
+
+  .login-intro h1 {
+    font-size: 48px;
+  }
+
+  .login-panel {
+    width: min(520px, calc(100% - 40px));
+    margin: 42px auto 54px;
+  }
+}
+
+@media (max-width: 430px) {
+  .role-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .login-intro h1 {
+    font-size: 42px;
+  }
+
+  .panel-footer {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+
+
+/* Encabezado del logo y nombre de la aplicación */
+.brand-header {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 50px;
+  margin-bottom: 24px;
+}
+
+/* Logo más grande con borde blanco */
+.brand-logo {
+  display: block;
+  width: 110px;
+  height: 110px;
+  object-fit: contain;
+  border: 1px solid white;
+  border-radius: 0px;
+  padding: 5px;
+  box-sizing: border-box;
+}
+
+/* Texto Registro LPS más cerca del logo */
+.brand-header .eyebrow {
+  margin: 0;
+  line-height: 1.3;
+}
+
