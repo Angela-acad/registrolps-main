@@ -15,6 +15,11 @@ function Inicio() {
   useEffect(() => {
     if (!usuario) {
       navigate('/login');
+      return;
+    }
+
+    if (usuario.tipo === 'Administrador') {
+      navigate('/admin');
     }
   }, [usuario, navigate]);
 

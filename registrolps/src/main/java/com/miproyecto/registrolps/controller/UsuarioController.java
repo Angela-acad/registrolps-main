@@ -21,6 +21,13 @@ public class UsuarioController {
         this.usuarioService = usuarioService;
     }
 
+    @GetMapping
+    public ResponseEntity<?> listarTodos() {
+        return ResponseEntity.ok(usuarioService.listarTodos().stream()
+                .peek(usuario -> usuario.setPassword(null))
+                .toList());
+    }
+
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody Map<String, String> credenciales) {
         String usuario = credenciales.get("usuario");

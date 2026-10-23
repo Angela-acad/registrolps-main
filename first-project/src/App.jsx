@@ -15,6 +15,8 @@ import PeliculaEditar from './pages/PeliculaEditar';
 import Serie from './pages/Serie';
 import SerieNueva from './pages/SerieNueva';
 import SerieDetalle from './pages/SerieDetalle';
+import AdminDashboard from './pages/AdminDashboard';
+import AdminCatalogo from './pages/AdminCatalogo';
 
 function App() {
   return (
@@ -41,6 +43,9 @@ function App() {
         <Route path="/serie" element={<Serie />} />
         <Route path="/serie/nueva" element={<SerieNueva />} />
         <Route path="/serie/:id" element={<SerieDetalle />} />
+
+        <Route path="/admin" element={<AdminDashboard />} />
+        <Route path="/admin/catalogo" element={<AdminCatalogo />} />
 
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>

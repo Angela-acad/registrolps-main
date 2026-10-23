@@ -11,6 +11,8 @@ import java.util.Optional;
 
 public interface LecturaRepository extends JpaRepository<Lectura, Long> {
 
+    List<Lectura> findAllByOrderByFechaCreacionDesc();
+
     List<Lectura> findByUsuarioOrderByFechaCreacionDesc(Usuario usuario);
 
     List<Lectura> findByUsuarioAndTituloContainingIgnoreCaseOrderByFechaCreacionDesc(

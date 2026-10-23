@@ -76,7 +76,7 @@ const Login = () => {
                 const usuario = await respuesta.json();
 
                 localStorage.setItem("usuario", JSON.stringify(usuario));
-                navigate("/inicio", { replace: true });
+                navigate(usuario.tipo === "Administrador" ? "/admin" : "/inicio", { replace: true });
             } else {
                 const error = await respuesta.json();
                 setErrorLogin(error.mensaje || "Usuario o contraseña incorrectos");

@@ -21,6 +21,10 @@ public class UsuarioService {
         return usuarioRepository.save(usuario);
     }
 
+    public java.util.List<Usuario> listarTodos() {
+        return usuarioRepository.findAll();
+    }
+
     public boolean existePorUsuario(String usuario) {
         return usuarioRepository.findByUsuario(usuario).isPresent();
     }

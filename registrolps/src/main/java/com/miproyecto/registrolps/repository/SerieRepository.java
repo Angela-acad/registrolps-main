@@ -11,6 +11,8 @@ import java.util.Optional;
 
 public interface SerieRepository extends JpaRepository<Serie, Long> {
 
+    List<Serie> findAllByOrderByFechaCreacionDesc();
+
     List<Serie> findByUsuarioOrderByFechaCreacionDesc(Usuario usuario);
 
     List<Serie> findByUsuarioAndTituloContainingIgnoreCaseOrderByFechaCreacionDesc(Usuario usuario, String titulo);

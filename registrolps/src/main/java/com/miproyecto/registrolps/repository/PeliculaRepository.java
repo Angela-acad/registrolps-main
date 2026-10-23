@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface PeliculaRepository extends JpaRepository<Pelicula, Long> {
+    List<Pelicula> findAllByOrderByFechaCreacionDesc();
     List<Pelicula> findByUsuarioOrderByFechaCreacionDesc(Usuario usuario);
     List<Pelicula> findByUsuarioAndTituloContainingIgnoreCaseOrderByFechaCreacionDesc(Usuario usuario, String titulo);
     List<Pelicula> findByUsuarioAndEstadoOrderByFechaCreacionDesc(Usuario usuario, Estado estado);

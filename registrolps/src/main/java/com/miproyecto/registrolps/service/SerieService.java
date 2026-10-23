@@ -41,6 +41,11 @@ public class SerieService {
     }
 
     @Transactional(readOnly = true)
+    public List<Serie> obtenerTodas() {
+        return serieRepository.findAllByOrderByFechaCreacionDesc();
+    }
+
+    @Transactional(readOnly = true)
     public List<Serie> obtenerTodas(Long usuarioId) {
         return serieRepository.findByUsuarioOrderByFechaCreacionDesc(obtenerUsuario(usuarioId));
     }

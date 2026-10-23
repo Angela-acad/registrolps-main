@@ -19,6 +19,11 @@ public class SerieController {
         this.serieService = serieService;
     }
 
+    @GetMapping("/todos")
+    public ResponseEntity<List<Serie>> obtenerTodasAdmin() {
+        return ResponseEntity.ok(serieService.obtenerTodas());
+    }
+
     @GetMapping
     public ResponseEntity<List<Serie>> obtenerTodas(@RequestParam Long usuarioId) {
         return ResponseEntity.ok(serieService.obtenerTodas(usuarioId));

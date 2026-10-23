@@ -25,6 +25,11 @@ public class LecturaService {
     }
 
     @Transactional(readOnly = true)
+    public List<Lectura> listarTodos() {
+        return lecturaRepository.findAllByOrderByFechaCreacionDesc();
+    }
+
+    @Transactional(readOnly = true)
     public List<Lectura> listarPorUsuario(Long usuarioId) {
         Usuario usuario = obtenerUsuario(usuarioId);
         return lecturaRepository.findByUsuarioOrderByFechaCreacionDesc(usuario);

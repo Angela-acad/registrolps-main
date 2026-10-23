@@ -18,6 +18,11 @@ public class LecturaController {
 
     // Listar todas las lecturas de un usuario (más reciente primero)
     // Ejemplo: GET /api/lecturas?usuarioId=1
+    @GetMapping("/todos")
+    public ResponseEntity<List<Lectura>> listarTodos() {
+        return ResponseEntity.ok(lecturaService.listarTodos());
+    }
+
     @GetMapping
     public ResponseEntity<List<Lectura>> listar(@RequestParam Long usuarioId) {
         return ResponseEntity.ok(lecturaService.listarPorUsuario(usuarioId));

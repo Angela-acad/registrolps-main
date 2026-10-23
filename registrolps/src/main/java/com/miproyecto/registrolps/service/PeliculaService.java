@@ -25,6 +25,11 @@ public class PeliculaService {
     }
 
     @Transactional(readOnly = true)
+    public List<Pelicula> listarTodos() {
+        return peliculaRepository.findAllByOrderByFechaCreacionDesc();
+    }
+
+    @Transactional(readOnly = true)
     public List<Pelicula> listarPorUsuario(Long usuarioId) {
         Usuario usuario = obtenerUsuario(usuarioId);
         return peliculaRepository.findByUsuarioOrderByFechaCreacionDesc(usuario);

@@ -16,6 +16,11 @@ public class PeliculaController {
 
     private final PeliculaService peliculaService;
 
+    @GetMapping("/todos")
+    public ResponseEntity<List<Pelicula>> listarTodos() {
+        return ResponseEntity.ok(peliculaService.listarTodos());
+    }
+
     @GetMapping
     public ResponseEntity<List<Pelicula>> listar(@RequestParam Long usuarioId) {
         return ResponseEntity.ok(peliculaService.listarPorUsuario(usuarioId));
