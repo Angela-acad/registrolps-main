@@ -85,7 +85,14 @@ function FormularioPelicula({ formData, onChange, onSubmit, cargando, mensaje, t
         <label htmlFor="portada">Portada (imagen)</label>
         <input id="portada" type="file" accept="image/*" onChange={handleFileChange} />
         {formData.portadaUrl && (
-          <p style={{ fontSize: '12px', color: 'green' }}>✓ Imagen subida correctamente</p>
+          <div>
+            <p style={{ fontSize: '12px', color: 'green' }}>✓ Imagen subida correctamente</p>
+            <img
+              src={`http://localhost:8081${formData.portadaUrl}`}
+              alt="Vista previa de la portada"
+              style={{ display: 'block', width: '120px', maxHeight: '180px', objectFit: 'cover', marginTop: '8px' }}
+            />
+          </div>
         )}
       </div>
 

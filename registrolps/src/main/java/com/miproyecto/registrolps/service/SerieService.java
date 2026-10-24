@@ -70,6 +70,7 @@ public class SerieService {
         serie.setEstado(datos.getEstado());
         serie.setValoracion(datos.getValoracion());
         serie.setComentario(datos.getComentario());
+        serie.setPortadaUrl(datos.getPortadaUrl());
 
         return serieRepository.save(serie);
     }

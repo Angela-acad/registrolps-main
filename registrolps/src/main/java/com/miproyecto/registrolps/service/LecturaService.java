@@ -71,6 +71,7 @@ public class LecturaService {
         lectura.setNumeroVolumenes(datos.getNumeroVolumenes());
         lectura.setNumeroCapitulos(datos.getNumeroCapitulos());
         lectura.setComentario(datos.getComentario());
+        lectura.setPortadaUrl(datos.getPortadaUrl());
 
         return lecturaRepository.save(lectura);
     }

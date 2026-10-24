@@ -54,7 +54,7 @@ function LecturaEditar() {
             numeroVolumenes: data.numeroVolumenes ?? '',
             numeroCapitulos: data.numeroCapitulos ?? '',
             comentario: data.comentario || '',
-            portadaUrl: formData.portadaUrl || null,
+            portadaUrl: data.portadaUrl || '',
           });
         }
       } catch {
@@ -96,6 +96,7 @@ function LecturaEditar() {
       numeroCapitulos:
         formData.numeroCapitulos !== '' ? Number(formData.numeroCapitulos) : null,
       comentario: formData.comentario || null,
+      portadaUrl: formData.portadaUrl || null,
     };
 
     try {

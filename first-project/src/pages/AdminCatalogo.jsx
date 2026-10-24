@@ -116,6 +116,9 @@ function AdminCatalogo() {
     if (categoria === 'lecturas') {
       return (
         <div className="catalog-card" key={item.id}>
+          {item.portadaUrl && (
+            <img className="catalog-cover" src={`http://localhost:8081${item.portadaUrl}`} alt={`Portada de ${item.titulo}`} />
+          )}
           <div className="catalog-card-header">
             <h3>{item.titulo}</h3>
             <span className="badge badge-admin">{item.estado}</span>
@@ -131,6 +134,9 @@ function AdminCatalogo() {
     if (categoria === 'peliculas') {
       return (
         <div className="catalog-card" key={item.id}>
+          {item.portadaUrl && (
+            <img className="catalog-cover" src={`http://localhost:8081${item.portadaUrl}`} alt={`Portada de ${item.titulo}`} />
+          )}
           <div className="catalog-card-header">
             <h3>{item.titulo}</h3>
             <span className="badge badge-admin">{item.estado}</span>
@@ -145,6 +151,9 @@ function AdminCatalogo() {
 
     return (
       <div className="catalog-card" key={item.id}>
+        {item.portadaUrl && (
+          <img className="catalog-cover" src={`http://localhost:8081${item.portadaUrl}`} alt={`Portada de ${item.titulo}`} />
+        )}
         <div className="catalog-card-header">
           <h3>{item.titulo}</h3>
           <span className="badge badge-admin">{item.estado}</span>
