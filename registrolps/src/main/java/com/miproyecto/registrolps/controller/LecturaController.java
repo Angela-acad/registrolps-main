@@ -2,74 +2,95 @@ package com.miproyecto.registrolps.controller;
 
 import com.miproyecto.registrolps.entity.Lectura;
 import com.miproyecto.registrolps.service.LecturaService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/lecturas")
-@RequiredArgsConstructor
+@CrossOrigin(origins = "*")
 public class LecturaController {
 
     private final LecturaService lecturaService;
 
-    // Listar todas las lecturas de un usuario (más reciente primero)
-    // Ejemplo: GET /api/lecturas?usuarioId=1
+    public LecturaController(LecturaService lecturaService) {
+        this.lecturaService = lecturaService;
+    }
+
     @GetMapping("/todos")
     public ResponseEntity<List<Lectura>> listarTodos() {
         return ResponseEntity.ok(lecturaService.listarTodos());
     }
 
     @GetMapping
-    public ResponseEntity<List<Lectura>> listar(@RequestParam Long usuarioId) {
-        return ResponseEntity.ok(lecturaService.listarPorUsuario(usuarioId));
+    public ResponseEntity<?> listar(@RequestParam Long usuarioId) {
+        try {
+            return ResponseEntity.ok(lecturaService.listarPorUsuario(usuarioId));
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("mensaje", e.getMessage()));
+        }
     }
 
-    // Obtener una lectura por id
-    // Ejemplo: GET /api/lecturas/5?usuarioId=1
     @GetMapping("/{id}")
-    public ResponseEntity<Lectura> obtener(@PathVariable Long id,
-                                           @RequestParam Long usuarioId) {
-        return ResponseEntity.ok(lecturaService.obtenerPorId(id, usuarioId));
+    public ResponseEntity<?> obtener(@PathVariable Long id,
+                                     @RequestParam Long usuarioId) {
+        try {
+            return ResponseEntity.ok(lecturaService.obtenerPorId(id, usuarioId));
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("mensaje", e.getMessage()));
+        }
     }
 
-    // Crear nueva lectura
-    // Ejemplo: POST /api/lecturas?usuarioId=1
     @PostMapping
-    public ResponseEntity<Lectura> crear(@RequestBody Lectura lectura,
-                                         @RequestParam Long usuarioId) {
-        Lectura creada = lecturaService.crear(lectura, usuarioId);
-        return ResponseEntity.status(HttpStatus.CREATED).body(creada);
+    public ResponseEntity<?> crear(@RequestBody Lectura lectura,
+                                   @RequestParam Long usuarioId) {
+        try {
+            Lectura creada = lecturaService.crear(lectura, usuarioId);
+            return ResponseEntity.status(HttpStatus.CREATED).body(creada);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest()
+                    .body(Map.of("mensaje", e.getMessage()));
+        }
     }
 
-    // Actualizar
-    // Ejemplo: PUT /api/lecturas/5?usuarioId=1
     @PutMapping("/{id}")
-    public ResponseEntity<Lectura> actualizar(@PathVariable Long id,
-                                              @RequestBody Lectura datos,
-                                              @RequestParam Long usuarioId) {
-        return ResponseEntity.ok(lecturaService.actualizar(id, datos, usuarioId));
+    public ResponseEntity<?> actualizar(@PathVariable Long id,
+                                        @RequestBody Lectura datos,
+                                        @RequestParam Long usuarioId) {
+        try {
+            return ResponseEntity.ok(lecturaService.actualizar(id, datos, usuarioId));
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("mensaje", e.getMessage()));
+        }
     }
 
-    // Eliminar
-    // Ejemplo: DELETE /api/lecturas/5?usuarioId=1
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> eliminar(@PathVariable Long id,
-                                         @RequestParam Long usuarioId) {
-        lecturaService.eliminar(id, usuarioId);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<?> eliminar(@PathVariable Long id,
+                                      @RequestParam Long usuarioId) {
+        try {
+            lecturaService.eliminar(id, usuarioId);
+            return ResponseEntity.noContent().build();
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("mensaje", e.getMessage()));
+        }
     }
 
-    // Búsqueda
-    // Ejemplo: GET /api/lecturas/buscar?usuarioId=1&campo=titulo&valor=harry
     @GetMapping("/buscar")
-    public ResponseEntity<List<Lectura>> buscar(
-            @RequestParam Long usuarioId,
-            @RequestParam String campo,
-            @RequestParam String valor) {
-        return ResponseEntity.ok(lecturaService.buscar(usuarioId, campo, valor));
+    public ResponseEntity<?> buscar(@RequestParam Long usuarioId,
+                                    @RequestParam String campo,
+                                    @RequestParam String valor) {
+        try {
+            return ResponseEntity.ok(lecturaService.buscar(usuarioId, campo, valor));
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("mensaje", e.getMessage()));
+        }
     }
 }

@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 
 import com.miproyecto.registrolps.entity.enums.Estado;
 import com.miproyecto.registrolps.entity.enums.Valoracion;
+import com.miproyecto.registrolps.entity.enums.Disponibilidad;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -44,11 +45,16 @@ public class Serie {
     private Valoracion valoracion;
 
     private String comentario;
-
+    private String portadaUrl;
+    
     @Column(updatable = false)
     private LocalDateTime fechaCreacion;
 
     private LocalDateTime fechaActualizacion;
+
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private Disponibilidad disponibilidad = Disponibilidad.existe;
 
     @ManyToOne
     @JoinColumn(name = "usuario_id", nullable = false)

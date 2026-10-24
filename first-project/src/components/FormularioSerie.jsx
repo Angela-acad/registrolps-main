@@ -1,22 +1,52 @@
-function FormularioSerie({ formData, onChange, onSubmit, cargando, mensaje }) {
+function FormularioSerie({ formData, onChange, onSubmit, cargando, mensaje, textoBoton = 'Añadir' }) {
+  
+  const handleFileChange = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const data = new FormData();
+    data.append('archivo', file);
+
+    try {
+      const response = await fetch('http://localhost:8081/api/upload', {
+        method: 'POST',
+        body: data,
+      });
+
+      if (!response.ok) throw new Error('Error al subir la imagen');
+
+      const result = await response.json();
+      onChange({ target: { name: 'portadaUrl', value: result.url } });
+
+    } catch (error) {
+      alert(`No se pudo subir la imagen: ${error.message}`);
+    }
+  };
+
   return (
     <form className="formulario-serie" onSubmit={onSubmit}>
       <div className="field-group">
         <label htmlFor="titulo">Título *</label>
-        <input id="titulo" name="titulo" value={formData.titulo} onChange={onChange} required />
+        <input id="titulo" type="text" name="titulo" value={formData.titulo} onChange={onChange} required />
       </div>
+
       <div className="field-group">
-        <label htmlFor="actorPrincipal">Actor principal</label>
-        <input id="actorPrincipal" name="actorPrincipal" value={formData.actorPrincipal} onChange={onChange} />
+        <label htmlFor="actorPrincipal">Actor Principal</label>
+        <input id="actorPrincipal" type="text" name="actorPrincipal" value={formData.actorPrincipal} onChange={onChange} />
       </div>
+
       <div className="field-group">
-        <label htmlFor="genero">Género</label>
-        <input id="genero" name="genero" value={formData.genero} onChange={onChange} />
+        <label htmlFor="genero">Género *</label>
+        <select id="genero" name="genero" value={formData.genero} onChange={onChange} required>
+          <option value="">Selecciona un género</option>
+          <option value="Accion">Acción</option>
+          <option value="Comedia">Comedia</option>
+          <option value="Drama">Drama</option>
+          <option value="Terror">Terror</option>
+          <option value="Ciencia_Ficcion">Ciencia Ficción</option>
+        </select>
       </div>
-      <div className="field-group">
-        <label htmlFor="numeroCapitulos">Número de capítulos</label>
-        <input id="numeroCapitulos" type="number" name="numeroCapitulos" min="0" value={formData.numeroCapitulos} onChange={onChange} />
-      </div>
+
       <div className="field-group">
         <label htmlFor="estado">Estado *</label>
         <select id="estado" name="estado" value={formData.estado} onChange={onChange} required>
@@ -27,6 +57,7 @@ function FormularioSerie({ formData, onChange, onSubmit, cargando, mensaje }) {
           <option value="Abandonado">Abandonado</option>
         </select>
       </div>
+
       <div className="field-group">
         <label htmlFor="valoracion">Valoración</label>
         <select id="valoracion" name="valoracion" value={formData.valoracion} onChange={onChange}>
@@ -38,13 +69,35 @@ function FormularioSerie({ formData, onChange, onSubmit, cargando, mensaje }) {
           <option value="Excelente">Excelente</option>
         </select>
       </div>
+
+      <div className="field-group">
+        <label htmlFor="numeroCapitulos">Número de capítulos</label>
+        <input id="numeroCapitulos" type="number" name="numeroCapitulos" min="0" value={formData.numeroCapitulos} onChange={onChange} />
+      </div>
+
+      {/* NUEVO: Campo para subir la portada */}
+      <div className="field-group">
+        <label htmlFor="portada">Portada (imagen)</label>
+        <input id="portada" type="file" accept="image/*" onChange={handleFileChange} />
+        {formData.portadaUrl && (
+          <p style={{ fontSize: '12px', color: 'green', marginTop: '5px' }}>✓ Imagen subida correctamente</p>
+        )}
+      </div>
+
       <div className="field-group">
         <label htmlFor="comentario">Comentario</label>
         <textarea id="comentario" name="comentario" rows="4" value={formData.comentario} onChange={onChange} />
       </div>
-      {mensaje.texto && <p className={`form-message ${mensaje.tipo === 'error' ? 'error-message' : 'success-message'}`}>{mensaje.texto}</p>}
+
+      {mensaje.texto && (
+        <p className={`form-message ${mensaje.tipo === 'error' ? 'error-message' : 'success-message'}`}>
+          {mensaje.texto}
+        </p>
+      )}
+
       <button type="submit" className="submit-button" disabled={cargando}>
-        <span>{cargando ? 'Guardando…' : 'Crear registro'}</span><span>→</span>
+        <span>{cargando ? 'Guardando…' : textoBoton}</span>
+        <span>→</span>
       </button>
     </form>
   );

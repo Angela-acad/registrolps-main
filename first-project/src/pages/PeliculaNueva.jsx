@@ -19,6 +19,7 @@ function PeliculaNueva() {
     valoracion: '',
     duracionMinutos: '',
     comentario: '',
+    portadaUrl: '',
   });
 
   const [cargando, setCargando] = useState(false);
@@ -48,6 +49,7 @@ function PeliculaNueva() {
       valoracion: formData.valoracion || null,
       duracionMinutos: formData.duracionMinutos ? Number(formData.duracionMinutos) : null,
       comentario: formData.comentario || null,
+      portadaUrl: formData.portadaUrl || null,
     };
 
     try {

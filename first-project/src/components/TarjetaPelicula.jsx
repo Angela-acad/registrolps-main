@@ -6,6 +6,15 @@ function TarjetaPelicula({ pelicula, onClick }) {
         <span className="tarjeta-estado">{pelicula.estado}</span>
       </div>
 
+      {/* NUEVO: Imagen de portada */}
+      {pelicula.portadaUrl && (
+        <img 
+          src={`http://localhost:8081${pelicula.portadaUrl}`} 
+          alt={`Portada de ${pelicula.titulo}`} 
+          style={{ width: '100%', maxHeight: '200px', objectFit: 'cover', marginBottom: '10px' }} 
+        />
+      )}
+
       <div className="tarjeta-meta">
         {pelicula.actorPrincipal && <span>Actor: {pelicula.actorPrincipal}</span>}
         {pelicula.genero && <span>Género: {pelicula.genero}</span>}

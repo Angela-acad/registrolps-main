@@ -21,6 +21,7 @@ function LecturaEditar() {
     numeroVolumenes: '',
     numeroCapitulos: '',
     comentario: '',
+    portadaUrl: '',
   });
 
   const [cargandoDatos, setCargandoDatos] = useState(true);
@@ -53,6 +54,7 @@ function LecturaEditar() {
             numeroVolumenes: data.numeroVolumenes ?? '',
             numeroCapitulos: data.numeroCapitulos ?? '',
             comentario: data.comentario || '',
+            portadaUrl: formData.portadaUrl || null,
           });
         }
       } catch {

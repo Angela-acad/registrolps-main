@@ -2,6 +2,7 @@ package com.miproyecto.registrolps.repository;
 
 import com.miproyecto.registrolps.entity.Lectura;
 import com.miproyecto.registrolps.entity.Usuario;
+import com.miproyecto.registrolps.entity.enums.Disponibilidad;
 import com.miproyecto.registrolps.entity.enums.Estado;
 import com.miproyecto.registrolps.entity.enums.Valoracion;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -11,18 +12,20 @@ import java.util.Optional;
 
 public interface LecturaRepository extends JpaRepository<Lectura, Long> {
 
-    List<Lectura> findAllByOrderByFechaCreacionDesc();
+        List<Lectura> findByDisponibilidadOrderByFechaCreacionDesc(Disponibilidad disponibilidad);
 
-    List<Lectura> findByUsuarioOrderByFechaCreacionDesc(Usuario usuario);
+    List<Lectura> findByUsuarioAndDisponibilidadOrderByFechaCreacionDesc(
+            Usuario usuario, Disponibilidad disponibilidad);
 
-    List<Lectura> findByUsuarioAndTituloContainingIgnoreCaseOrderByFechaCreacionDesc(
-            Usuario usuario, String titulo);
+    Optional<Lectura> findByIdAndUsuarioAndDisponibilidad(
+            Long id, Usuario usuario, Disponibilidad disponibilidad);
 
-    List<Lectura> findByUsuarioAndEstadoOrderByFechaCreacionDesc(
-            Usuario usuario, Estado estado);
+    List<Lectura> findByUsuarioAndDisponibilidadAndTituloContainingIgnoreCaseOrderByFechaCreacionDesc(
+            Usuario usuario, Disponibilidad disponibilidad, String titulo);
 
-    List<Lectura> findByUsuarioAndValoracionOrderByFechaCreacionDesc(
-            Usuario usuario, Valoracion valoracion);
+    List<Lectura> findByUsuarioAndDisponibilidadAndEstadoOrderByFechaCreacionDesc(
+            Usuario usuario, Disponibilidad disponibilidad, Estado estado);
 
-    Optional<Lectura> findByIdAndUsuario(Long id, Usuario usuario);
+    List<Lectura> findByUsuarioAndDisponibilidadAndValoracionOrderByFechaCreacionDesc(
+            Usuario usuario, Disponibilidad disponibilidad, Valoracion valoracion);
 }

@@ -20,6 +20,7 @@ function LecturaNueva() {
     numeroVolumenes: '',
     numeroCapitulos: '',
     comentario: '',
+    portadaUrl: '', // <-- AÑADIDO
   });
 
   const [cargando, setCargando] = useState(false);
@@ -50,6 +51,7 @@ function LecturaNueva() {
       numeroVolumenes: formData.numeroVolumenes ? Number(formData.numeroVolumenes) : null,
       numeroCapitulos: formData.numeroCapitulos ? Number(formData.numeroCapitulos) : null,
       comentario: formData.comentario || null,
+      portadaUrl: formData.portadaUrl || null, // <-- AÑADIDO
     };
 
     try {
@@ -72,7 +74,6 @@ function LecturaNueva() {
         return;
       }
 
-      // Éxito → volver al listado (el nuevo registro aparecerá primero)
       navigate('/lectura');
     } catch {
       setMensaje({
@@ -90,9 +91,7 @@ function LecturaNueva() {
       <section className="lectura-nueva-intro">
         <p className="eyebrow">Registro LPS</p>
         <h1>Nueva lectura</h1>
-        <p>
-          Completa el formulario para guardar un nuevo registro en tu biblioteca.
-        </p>
+        <p>Completa el formulario para guardar un nuevo registro en tu biblioteca.</p>
         <div className="intro-line" />
         <p className="intro-note">Los campos con * son obligatorios</p>
       </section>
@@ -108,20 +107,8 @@ function LecturaNueva() {
           </div>
 
           <div className="panel-acciones">
-            <button
-              type="button"
-              className="btn-secundario"
-              onClick={() => navigate('/lectura')}
-            >
-              Volver a Lectura
-            </button>
-            <button
-              type="button"
-              className="btn-secundario"
-              onClick={() => navigate('/')}
-            >
-              Inicio
-            </button>
+            <button type="button" className="btn-secundario" onClick={() => navigate('/lectura')}>Volver a Lectura</button>
+            <button type="button" className="btn-secundario" onClick={() => navigate('/')}>Inicio</button>
           </div>
         </div>
 

@@ -2,6 +2,7 @@ package com.miproyecto.registrolps.repository;
 
 import com.miproyecto.registrolps.entity.Serie;
 import com.miproyecto.registrolps.entity.Usuario;
+import com.miproyecto.registrolps.entity.enums.Disponibilidad;
 import com.miproyecto.registrolps.entity.enums.Estado;
 import com.miproyecto.registrolps.entity.enums.Valoracion;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -11,19 +12,20 @@ import java.util.Optional;
 
 public interface SerieRepository extends JpaRepository<Serie, Long> {
 
-    List<Serie> findAllByOrderByFechaCreacionDesc();
+        List<Serie> findByDisponibilidadOrderByFechaCreacionDesc(Disponibilidad disponibilidad);
 
-    List<Serie> findByUsuarioOrderByFechaCreacionDesc(Usuario usuario);
+    List<Serie> findByUsuarioAndDisponibilidadOrderByIdDesc(
+            Usuario usuario, Disponibilidad disponibilidad);
 
-    List<Serie> findByUsuarioAndTituloContainingIgnoreCaseOrderByFechaCreacionDesc(Usuario usuario, String titulo);
+    Optional<Serie> findByIdAndUsuarioAndDisponibilidad(
+            Long id, Usuario usuario, Disponibilidad disponibilidad);
 
-    List<Serie> findByUsuarioAndActorPrincipalContainingIgnoreCaseOrderByFechaCreacionDesc(Usuario usuario, String actorPrincipal);
+    List<Serie> findByUsuarioAndDisponibilidadAndTituloContainingIgnoreCaseOrderByIdDesc(
+            Usuario usuario, Disponibilidad disponibilidad, String titulo);
 
-    List<Serie> findByUsuarioAndGeneroContainingIgnoreCaseOrderByFechaCreacionDesc(Usuario usuario, String genero);
+    List<Serie> findByUsuarioAndDisponibilidadAndEstadoOrderByIdDesc(
+            Usuario usuario, Disponibilidad disponibilidad, Estado estado);
 
-    List<Serie> findByUsuarioAndEstadoOrderByFechaCreacionDesc(Usuario usuario, Estado estado);
-
-    List<Serie> findByUsuarioAndValoracionOrderByFechaCreacionDesc(Usuario usuario, Valoracion valoracion);
-
-    Optional<Serie> findByIdAndUsuario(Long id, Usuario usuario);
+    List<Serie> findByUsuarioAndDisponibilidadAndValoracionOrderByIdDesc(
+            Usuario usuario, Disponibilidad disponibilidad, Valoracion valoracion);
 }

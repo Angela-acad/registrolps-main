@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/series")
@@ -25,38 +26,71 @@ public class SerieController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Serie>> obtenerTodas(@RequestParam Long usuarioId) {
-        return ResponseEntity.ok(serieService.obtenerTodas(usuarioId));
+    public ResponseEntity<?> listar(@RequestParam Long usuarioId) {
+        try {
+            return ResponseEntity.ok(serieService.listarPorUsuario(usuarioId));
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("mensaje", e.getMessage()));
+        }
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Serie> obtenerPorId(@PathVariable Long id, @RequestParam Long usuarioId) {
-        return ResponseEntity.ok(serieService.obtenerPorId(id, usuarioId));
-    }
-
-    @GetMapping("/buscar")
-    public ResponseEntity<List<Serie>> buscarPorFiltro(
-            @RequestParam Long usuarioId,
-            @RequestParam(defaultValue = "titulo") String filtro,
-            @RequestParam(required = false) String valor) {
-        return ResponseEntity.ok(serieService.buscarPorFiltro(usuarioId, filtro, valor));
+    public ResponseEntity<?> obtener(@PathVariable Long id,
+                                     @RequestParam Long usuarioId) {
+        try {
+            return ResponseEntity.ok(serieService.obtenerPorId(id, usuarioId));
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("mensaje", e.getMessage()));
+        }
     }
 
     @PostMapping
-    public ResponseEntity<Serie> crearSerie(@RequestBody Serie serie, @RequestParam Long usuarioId) {
-        Serie nuevaSerie = serieService.crearSerie(serie, usuarioId);
-        return new ResponseEntity<>(nuevaSerie, HttpStatus.CREATED);
+    public ResponseEntity<?> crear(@RequestBody Serie serie,
+                                   @RequestParam Long usuarioId) {
+        try {
+            Serie creada = serieService.crear(serie, usuarioId);
+            return ResponseEntity.status(HttpStatus.CREATED).body(creada);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest()
+                    .body(Map.of("mensaje", e.getMessage()));
+        }
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Serie> actualizarSerie(@PathVariable Long id, @RequestBody Serie serie, @RequestParam Long usuarioId) {
-        Serie serieActualizada = serieService.actualizarSerie(id, serie, usuarioId);
-        return ResponseEntity.ok(serieActualizada);
+    public ResponseEntity<?> actualizar(@PathVariable Long id,
+                                        @RequestBody Serie datos,
+                                        @RequestParam Long usuarioId) {
+        try {
+            return ResponseEntity.ok(serieService.actualizar(id, datos, usuarioId));
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("mensaje", e.getMessage()));
+        }
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> eliminarSerie(@PathVariable Long id, @RequestParam Long usuarioId) {
-        serieService.eliminarSerie(id, usuarioId);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<?> eliminar(@PathVariable Long id,
+                                      @RequestParam Long usuarioId) {
+        try {
+            serieService.eliminar(id, usuarioId);
+            return ResponseEntity.noContent().build();
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("mensaje", e.getMessage()));
+        }
+    }
+
+    @GetMapping("/buscar")
+    public ResponseEntity<?> buscar(@RequestParam Long usuarioId,
+                                    @RequestParam String campo,
+                                    @RequestParam String valor) {
+        try {
+            return ResponseEntity.ok(serieService.buscar(usuarioId, campo, valor));
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("mensaje", e.getMessage()));
+        }
     }
 }
