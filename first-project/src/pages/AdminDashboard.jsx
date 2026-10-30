@@ -74,10 +74,20 @@ function AdminDashboard() {
           <h1>Usuarios del sistema</h1>
           <p className="admin-subtitulo">Vista general de cuentas y registros</p>
         </div>
-
         <div className="admin-actions">
-          <button className="btn-secundario" type="button" onClick={() => navigate('/admin/catalogo')}>
+          <button
+            className="btn-secundario"
+            type="button"
+            onClick={() => navigate('/admin/catalogo')}
+          >
             Ver catálogo global
+          </button>
+          <button
+            className="btn-primario"
+            type="button"
+            onClick={() => navigate('/admin/usuarios/nuevo')}
+          >
+            Crear usuario
           </button>
           <button className="btn-primario" type="button" onClick={cerrarSesion}>
             Cerrar sesión

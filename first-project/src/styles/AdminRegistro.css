@@ -1,0 +1,24 @@
+/* Reutiliza el estilo del registro público */
+@import './Registro.css';
+
+.admin-registro-page .panel-acciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.admin-registro-page .btn-secundario {
+  border: 1px solid #c9c0b2;
+  padding: 10px 14px;
+  background: #fffdf9;
+  color: #173f3a;
+  font: inherit;
+  font-weight: 700;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.admin-registro-page .btn-secundario:hover {
+  background: #e8eee8;
+  border-color: #173f3a;
+}
