@@ -32,8 +32,7 @@ public class LecturaService {
 
     @Transactional(readOnly = true)
     public List<Lectura> listarTodos() {
-        return lecturaRepository.findByDisponibilidadOrderByFechaCreacionDesc(
-            Disponibilidad.existe);
+        return lecturaRepository.findAllByOrderByFechaCreacionDesc();
     }
 
     @Transactional(readOnly = true)
@@ -80,6 +79,14 @@ public class LecturaService {
     @Transactional
     public void eliminar(Long id, Long usuarioId) {
         Lectura lectura = obtenerPorId(id, usuarioId);
+        lectura.setDisponibilidad(Disponibilidad.inexistente);
+        lecturaRepository.save(lectura);
+    }
+
+    @Transactional
+    public void eliminarComoAdministrador(Long id) {
+        Lectura lectura = lecturaRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Lectura no encontrada"));
         lectura.setDisponibilidad(Disponibilidad.inexistente);
         lecturaRepository.save(lectura);
     }

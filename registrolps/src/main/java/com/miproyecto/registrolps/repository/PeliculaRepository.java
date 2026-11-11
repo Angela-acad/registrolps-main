@@ -12,6 +12,8 @@ import java.util.Optional;
 
 public interface PeliculaRepository extends JpaRepository<Pelicula, Long> {
 
+        List<Pelicula> findAllByOrderByFechaCreacionDesc();
+
         List<Pelicula> findByDisponibilidadOrderByFechaCreacionDesc(Disponibilidad disponibilidad);
 
     List<Pelicula> findByUsuarioAndDisponibilidadOrderByIdDesc(

@@ -24,6 +24,9 @@ function AdminCatalogo() {
   const [cargando, setCargando] = useState(true);
   const [busqueda, setBusqueda] = useState('');
   const [estadoFiltro, setEstadoFiltro] = useState('todos');
+  const [disponibilidadFiltro, setDisponibilidadFiltro] = useState('todos');
+  const [eliminandoId, setEliminandoId] = useState(null);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     if (!usuario) {
@@ -49,16 +52,18 @@ function AdminCatalogo() {
           series: 'http://localhost:8081/api/series/todos',
         }[categoria];
 
-        const response = await fetch(endpoint);
+        const response = await fetch(`${endpoint}?administradorId=${usuario.id}`);
         if (!response.ok) {
           throw new Error('No se pudieron cargar los registros');
         }
 
         const data = await response.json();
         setRegistros(data);
+        setError('');
       } catch (error) {
         console.error(error);
         setRegistros([]);
+        setError('No se pudo cargar el catálogo. Verifica la conexión o tus permisos.');
       } finally {
         setCargando(false);
       }
@@ -96,21 +101,75 @@ function AdminCatalogo() {
       ].filter(Boolean);
       const coincideTexto = valores.some((valor) => normalizar(String(valor)).includes(consulta));
       const coincideEstado = estadoFiltro === 'todos' || item.estado === estadoFiltro;
-      return coincideTexto && coincideEstado;
+      const coincideDisponibilidad = disponibilidadFiltro === 'todos'
+        || item.disponibilidad === disponibilidadFiltro;
+      return coincideTexto && coincideEstado && coincideDisponibilidad;
     });
-  }, [registros, busqueda, estadoFiltro]);
+  }, [registros, busqueda, estadoFiltro, disponibilidadFiltro]);
 
   const cambiarCategoria = (nuevaCategoria) => {
     setCategoria(nuevaCategoria);
     setSearchParams({ categoria: nuevaCategoria });
     setBusqueda('');
     setEstadoFiltro('todos');
+    setDisponibilidadFiltro('todos');
   };
 
   const cerrarSesion = () => {
     localStorage.removeItem('usuario');
     navigate('/login');
   };
+
+  const eliminarRegistro = async (item) => {
+    const confirmado = window.confirm(
+      `¿Marcar "${item.titulo}" como inexistente? Seguirá visible en el catálogo administrativo.`
+    );
+    if (!confirmado) return;
+
+    setEliminandoId(item.id);
+    setError('');
+    try {
+      const recurso = {
+        lecturas: 'lecturas',
+        peliculas: 'peliculas',
+        series: 'series',
+      }[categoria];
+      const response = await fetch(
+        `http://localhost:8081/api/${recurso}/admin/${item.id}?administradorId=${usuario.id}`,
+        { method: 'DELETE' }
+      );
+
+      if (!response.ok) {
+        const data = await response.json().catch(() => ({}));
+        throw new Error(data.mensaje || 'No se pudo eliminar el registro.');
+      }
+
+      setRegistros((actuales) => actuales.map((registro) => (
+        registro.id === item.id ? { ...registro, disponibilidad: 'inexistente' } : registro
+      )));
+    } catch (error) {
+      setError(error.message || 'No se pudo eliminar el registro.');
+    } finally {
+      setEliminandoId(null);
+    }
+  };
+
+  const renderDisponibilidad = (item) => (
+    <span className={`badge ${item.disponibilidad === 'existe' ? 'badge-active' : 'badge-inactive'}`}>
+      {item.disponibilidad === 'existe' ? 'Activo' : 'Inexistente'}
+    </span>
+  );
+
+  const renderAccionEliminar = (item) => item.disponibilidad === 'existe' && (
+    <button
+      className="btn-peligro"
+      type="button"
+      onClick={() => eliminarRegistro(item)}
+      disabled={eliminandoId === item.id}
+    >
+      {eliminandoId === item.id ? 'Eliminando…' : 'Eliminar registro'}
+    </button>
+  );
 
   const renderItem = (item) => {
     if (categoria === 'lecturas') {
@@ -121,12 +180,16 @@ function AdminCatalogo() {
           )}
           <div className="catalog-card-header">
             <h3>{item.titulo}</h3>
-            <span className="badge badge-admin">{item.estado}</span>
+            <div className="catalog-card-badges">
+              <span className="badge badge-admin">{item.estado}</span>
+              {renderDisponibilidad(item)}
+            </div>
           </div>
           <p><strong>Autor:</strong> {item.autor || 'No registrado'}</p>
           <p><strong>Tipo:</strong> {item.tipo}</p>
           <p><strong>Valoración:</strong> {item.valoracion || 'Sin valoración'}</p>
           <p><strong>Usuario:</strong> {item.usuario?.usuario || 'Sin usuario'}</p>
+          <div className="catalog-card-actions">{renderAccionEliminar(item)}</div>
         </div>
       );
     }
@@ -139,12 +202,16 @@ function AdminCatalogo() {
           )}
           <div className="catalog-card-header">
             <h3>{item.titulo}</h3>
-            <span className="badge badge-admin">{item.estado}</span>
+            <div className="catalog-card-badges">
+              <span className="badge badge-admin">{item.estado}</span>
+              {renderDisponibilidad(item)}
+            </div>
           </div>
           <p><strong>Actor principal:</strong> {item.actorPrincipal || 'No registrado'}</p>
           <p><strong>Género:</strong> {item.genero || 'No registrado'}</p>
           <p><strong>Valoración:</strong> {item.valoracion || 'Sin valoración'}</p>
           <p><strong>Usuario:</strong> {item.usuario?.usuario || 'Sin usuario'}</p>
+          <div className="catalog-card-actions">{renderAccionEliminar(item)}</div>
         </div>
       );
     }
@@ -156,13 +223,17 @@ function AdminCatalogo() {
         )}
         <div className="catalog-card-header">
           <h3>{item.titulo}</h3>
-          <span className="badge badge-admin">{item.estado}</span>
+          <div className="catalog-card-badges">
+            <span className="badge badge-admin">{item.estado}</span>
+            {renderDisponibilidad(item)}
+          </div>
         </div>
         <p><strong>Actor principal:</strong> {item.actorPrincipal || 'No registrado'}</p>
         <p><strong>Capítulos:</strong> {item.numeroCapitulos ?? 'No registrado'}</p>
         <p><strong>Género:</strong> {item.genero || 'No registrado'}</p>
         <p><strong>Valoración:</strong> {item.valoracion || 'Sin valoración'}</p>
         <p><strong>Usuario:</strong> {item.usuario?.usuario || 'Sin usuario'}</p>
+        <div className="catalog-card-actions">{renderAccionEliminar(item)}</div>
       </div>
     );
   };
@@ -218,8 +289,21 @@ function AdminCatalogo() {
               {estados.map((estado) => <option key={estado} value={estado}>{estado}</option>)}
             </select>
           </label>
+          <label>
+            <span className="sr-only">Filtrar por disponibilidad</span>
+            <select
+              value={disponibilidadFiltro}
+              onChange={(event) => setDisponibilidadFiltro(event.target.value)}
+            >
+              <option value="todos">Todos los registros</option>
+              <option value="existe">Activos</option>
+              <option value="inexistente">Inexistentes</option>
+            </select>
+          </label>
           <span className="admin-total">{registrosFiltrados.length} registros</span>
         </div>
+
+        {error && <p className="form-message error-message">{error}</p>}
 
         {cargando ? (
           <p className="estado-msg">Cargando registros...</p>

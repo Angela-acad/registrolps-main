@@ -13,6 +13,8 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
 
     boolean existsByUsuario(String usuario);
 
+    List<Usuario> findAllByOrderByFechaCreacionDesc();
+
     List<Usuario> findByDisponibilidadOrderByFechaCreacionDesc(Disponibilidad disponibilidad);
 
     Optional<Usuario> findByIdAndDisponibilidad(Long id, Disponibilidad disponibilidad);

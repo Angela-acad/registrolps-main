@@ -1,6 +1,7 @@
 package com.miproyecto.registrolps.controller;
 
 import com.miproyecto.registrolps.entity.Serie;
+import com.miproyecto.registrolps.service.AdminAuthorizationService;
 import com.miproyecto.registrolps.service.SerieService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,14 +16,38 @@ import java.util.Map;
 public class SerieController {
 
     private final SerieService serieService;
+    private final AdminAuthorizationService adminAuthorizationService;
 
-    public SerieController(SerieService serieService) {
+    public SerieController(SerieService serieService,
+                           AdminAuthorizationService adminAuthorizationService) {
         this.serieService = serieService;
+        this.adminAuthorizationService = adminAuthorizationService;
     }
 
     @GetMapping("/todos")
-    public ResponseEntity<List<Serie>> obtenerTodasAdmin() {
-        return ResponseEntity.ok(serieService.obtenerTodas());
+    public ResponseEntity<?> obtenerTodasAdmin(@RequestParam Long administradorId) {
+        try {
+            adminAuthorizationService.validarAdministrador(administradorId);
+            return ResponseEntity.ok(serieService.obtenerTodas().stream()
+                    .peek(serie -> serie.getUsuario().setPassword(null))
+                    .toList());
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(Map.of("mensaje", e.getMessage()));
+        }
+    }
+
+    @DeleteMapping("/admin/{id}")
+    public ResponseEntity<?> eliminarComoAdministrador(@PathVariable Long id,
+                                                        @RequestParam Long administradorId) {
+        try {
+            adminAuthorizationService.validarAdministrador(administradorId);
+            serieService.eliminarComoAdministrador(id);
+            return ResponseEntity.noContent().build();
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(Map.of("mensaje", e.getMessage()));
+        }
     }
 
     @GetMapping

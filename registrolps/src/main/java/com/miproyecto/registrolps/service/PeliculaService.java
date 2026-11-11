@@ -32,8 +32,7 @@ public class PeliculaService {
 
     @Transactional(readOnly = true)
     public List<Pelicula> listarTodos() {
-        return peliculaRepository.findByDisponibilidadOrderByFechaCreacionDesc(
-            Disponibilidad.existe);
+        return peliculaRepository.findAllByOrderByFechaCreacionDesc();
     }
 
     @Transactional(readOnly = true)
@@ -77,6 +76,14 @@ public class PeliculaService {
     @Transactional
     public void eliminar(Long id, Long usuarioId) {
         Pelicula pelicula = obtenerPorId(id, usuarioId);
+        pelicula.setDisponibilidad(Disponibilidad.inexistente);
+        peliculaRepository.save(pelicula);
+    }
+
+    @Transactional
+    public void eliminarComoAdministrador(Long id) {
+        Pelicula pelicula = peliculaRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Película no encontrada"));
         pelicula.setDisponibilidad(Disponibilidad.inexistente);
         peliculaRepository.save(pelicula);
     }

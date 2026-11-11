@@ -51,8 +51,7 @@ public class UsuarioService {
     }
 
     public java.util.List<Usuario> listarTodos() {
-        return usuarioRepository.findByDisponibilidadOrderByFechaCreacionDesc(
-            Disponibilidad.existe);
+        return usuarioRepository.findAllByOrderByFechaCreacionDesc();
     }
 
     public boolean existePorUsuario(String usuario) {

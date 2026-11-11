@@ -111,6 +111,12 @@
   gap: 12px;
 }
 
+.admin-mis-registros {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
 .categoria-link {
   display: grid;
   grid-template-columns: auto 1fr auto;
@@ -227,6 +233,15 @@
   text-transform: uppercase;
 }
 
+.admin-card-actions,
+.catalog-card-actions,
+.catalog-card-badges {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
 .badge {
   display: inline-flex;
   align-items: center;
@@ -245,6 +260,16 @@
 .badge-user {
   background: #e5efeb;
   color: #28574e;
+}
+
+.badge-active {
+  background: #e5efeb;
+  color: #28574e;
+}
+
+.badge-inactive {
+  background: #f5e5e2;
+  color: #8a3026;
 }
 
 .admin-tabs {
@@ -324,6 +349,11 @@
   color: #173f3a;
 }
 
+.catalog-card-actions {
+  justify-content: flex-end;
+  margin-top: 16px;
+}
+
 .btn-primario,
 .btn-secundario {
   border: 0;
@@ -355,6 +385,26 @@
   background: #e8eee8;
 }
 
+.btn-peligro {
+  border: 1px solid #a84235;
+  padding: 10px 13px;
+  background: #fff8f6;
+  color: #8a3026;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.btn-peligro:hover:not(:disabled) {
+  background: #f5e5e2;
+}
+
+.btn-peligro:disabled {
+  cursor: wait;
+  opacity: 0.6;
+}
+
 .estado-msg {
   margin: 18px 0;
   color: #718078;
@@ -382,6 +432,10 @@
 
   .admin-actions {
     flex-wrap: wrap;
+  }
+
+  .admin-card-actions {
+    justify-content: flex-start;
   }
 
   .admin-categorias {

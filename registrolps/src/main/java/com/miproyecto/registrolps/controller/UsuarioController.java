@@ -2,6 +2,7 @@ package com.miproyecto.registrolps.controller;
 
 import com.miproyecto.registrolps.entity.Usuario;
 import com.miproyecto.registrolps.entity.enums.TipoUsuario;
+import com.miproyecto.registrolps.service.AdminAuthorizationService;
 import com.miproyecto.registrolps.service.UsuarioService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,16 +17,25 @@ import java.util.Optional;
 public class UsuarioController {
 
     private final UsuarioService usuarioService;
+    private final AdminAuthorizationService adminAuthorizationService;
 
-    public UsuarioController(UsuarioService usuarioService) {
+    public UsuarioController(UsuarioService usuarioService,
+                             AdminAuthorizationService adminAuthorizationService) {
         this.usuarioService = usuarioService;
+        this.adminAuthorizationService = adminAuthorizationService;
     }
 
     @GetMapping
-    public ResponseEntity<?> listarTodos() {
-        return ResponseEntity.ok(usuarioService.listarTodos().stream()
-                .peek(usuario -> usuario.setPassword(null))
-                .toList());
+    public ResponseEntity<?> listarTodos(@RequestParam Long administradorId) {
+        try {
+            adminAuthorizationService.validarAdministrador(administradorId);
+            return ResponseEntity.ok(usuarioService.listarTodos().stream()
+                    .peek(usuario -> usuario.setPassword(null))
+                    .toList());
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(Map.of("mensaje", e.getMessage()));
+        }
     }
 
     /** POST /api/usuario/login */
@@ -113,6 +123,19 @@ public class UsuarioController {
             return ResponseEntity.noContent().build();
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("mensaje", e.getMessage()));
+        }
+    }
+
+    @DeleteMapping("/admin/{id}")
+    public ResponseEntity<?> eliminarComoAdministrador(@PathVariable Long id,
+                                                        @RequestParam Long administradorId) {
+        try {
+            adminAuthorizationService.validarAdministrador(administradorId);
+            usuarioService.eliminar(id);
+            return ResponseEntity.noContent().build();
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
                     .body(Map.of("mensaje", e.getMessage()));
         }
     }

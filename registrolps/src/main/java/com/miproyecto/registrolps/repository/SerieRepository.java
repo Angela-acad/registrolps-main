@@ -12,6 +12,8 @@ import java.util.Optional;
 
 public interface SerieRepository extends JpaRepository<Serie, Long> {
 
+        List<Serie> findAllByOrderByFechaCreacionDesc();
+
         List<Serie> findByDisponibilidadOrderByFechaCreacionDesc(Disponibilidad disponibilidad);
 
     List<Serie> findByUsuarioAndDisponibilidadOrderByIdDesc(

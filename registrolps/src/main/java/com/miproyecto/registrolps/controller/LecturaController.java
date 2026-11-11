@@ -1,6 +1,7 @@
 package com.miproyecto.registrolps.controller;
 
 import com.miproyecto.registrolps.entity.Lectura;
+import com.miproyecto.registrolps.service.AdminAuthorizationService;
 import com.miproyecto.registrolps.service.LecturaService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,14 +16,38 @@ import java.util.Map;
 public class LecturaController {
 
     private final LecturaService lecturaService;
+    private final AdminAuthorizationService adminAuthorizationService;
 
-    public LecturaController(LecturaService lecturaService) {
+    public LecturaController(LecturaService lecturaService,
+                             AdminAuthorizationService adminAuthorizationService) {
         this.lecturaService = lecturaService;
+        this.adminAuthorizationService = adminAuthorizationService;
     }
 
     @GetMapping("/todos")
-    public ResponseEntity<List<Lectura>> listarTodos() {
-        return ResponseEntity.ok(lecturaService.listarTodos());
+    public ResponseEntity<?> listarTodos(@RequestParam Long administradorId) {
+        try {
+            adminAuthorizationService.validarAdministrador(administradorId);
+            return ResponseEntity.ok(lecturaService.listarTodos().stream()
+                    .peek(lectura -> lectura.getUsuario().setPassword(null))
+                    .toList());
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(Map.of("mensaje", e.getMessage()));
+        }
+    }
+
+    @DeleteMapping("/admin/{id}")
+    public ResponseEntity<?> eliminarComoAdministrador(@PathVariable Long id,
+                                                        @RequestParam Long administradorId) {
+        try {
+            adminAuthorizationService.validarAdministrador(administradorId);
+            lecturaService.eliminarComoAdministrador(id);
+            return ResponseEntity.noContent().build();
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(Map.of("mensaje", e.getMessage()));
+        }
     }
 
     @GetMapping

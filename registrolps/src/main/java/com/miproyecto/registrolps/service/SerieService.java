@@ -32,8 +32,7 @@ public class SerieService {
 
     @Transactional(readOnly = true)
     public List<Serie> obtenerTodas() {
-        return serieRepository.findByDisponibilidadOrderByFechaCreacionDesc(
-                Disponibilidad.existe);
+        return serieRepository.findAllByOrderByFechaCreacionDesc();
     }
 
     @Transactional(readOnly = true)
@@ -78,6 +77,14 @@ public class SerieService {
     @Transactional
     public void eliminar(Long id, Long usuarioId) {
         Serie serie = obtenerPorId(id, usuarioId);
+        serie.setDisponibilidad(Disponibilidad.inexistente);
+        serieRepository.save(serie);
+    }
+
+    @Transactional
+    public void eliminarComoAdministrador(Long id) {
+        Serie serie = serieRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Serie no encontrada"));
         serie.setDisponibilidad(Disponibilidad.inexistente);
         serieRepository.save(serie);
     }
