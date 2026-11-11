@@ -33,10 +33,8 @@ function AdminCatalogo() {
       navigate('/login');
       return;
     }
-
     if (usuario.tipo !== 'Administrador') {
       navigate('/inicio');
-      return;
     }
   }, [usuario, navigate]);
 
@@ -52,13 +50,15 @@ function AdminCatalogo() {
           series: 'http://localhost:8081/api/series/todos',
         }[categoria];
 
-        const response = await fetch(`${endpoint}?administradorId=${usuario.id}`);
+        const response = await fetch(
+          `${endpoint}?administradorId=${usuario.id}`
+        );
         if (!response.ok) {
           throw new Error('No se pudieron cargar los registros');
         }
 
         const data = await response.json();
-        setRegistros(data);
+        setRegistros(Array.isArray(data) ? data : []);
         setError('');
       } catch (error) {
         console.error(error);
@@ -83,10 +83,11 @@ function AdminCatalogo() {
   );
 
   const registrosFiltrados = useMemo(() => {
-    const normalizar = (texto) => texto
-      .toLocaleLowerCase()
-      .normalize('NFD')
-      .replace(/[\u0300-\u036f]/g, '');
+    const normalizar = (texto) =>
+      String(texto || '')
+        .toLocaleLowerCase()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '');
     const consulta = normalizar(busqueda.trim());
 
     return registros.filter((item) => {
@@ -99,10 +100,12 @@ function AdminCatalogo() {
         item.estado,
         item.usuario?.usuario,
       ].filter(Boolean);
-      const coincideTexto = valores.some((valor) => normalizar(String(valor)).includes(consulta));
+      const coincideTexto =
+        !consulta ||
+        valores.some((valor) => normalizar(String(valor)).includes(consulta));
       const coincideEstado = estadoFiltro === 'todos' || item.estado === estadoFiltro;
-      const coincideDisponibilidad = disponibilidadFiltro === 'todos'
-        || item.disponibilidad === disponibilidadFiltro;
+      const coincideDisponibilidad =
+        disponibilidadFiltro === 'todos' || item.disponibilidad === disponibilidadFiltro;
       return coincideTexto && coincideEstado && coincideDisponibilidad;
     });
   }, [registros, busqueda, estadoFiltro, disponibilidadFiltro]);
@@ -134,6 +137,7 @@ function AdminCatalogo() {
         peliculas: 'peliculas',
         series: 'series',
       }[categoria];
+
       const response = await fetch(
         `http://localhost:8081/api/${recurso}/admin/${item.id}?administradorId=${usuario.id}`,
         { method: 'DELETE' }
@@ -144,9 +148,13 @@ function AdminCatalogo() {
         throw new Error(data.mensaje || 'No se pudo eliminar el registro.');
       }
 
-      setRegistros((actuales) => actuales.map((registro) => (
-        registro.id === item.id ? { ...registro, disponibilidad: 'inexistente' } : registro
-      )));
+      setRegistros((actuales) =>
+        actuales.map((registro) =>
+          registro.id === item.id
+            ? { ...registro, disponibilidad: 'inexistente' }
+            : registro
+        )
+      );
     } catch (error) {
       setError(error.message || 'No se pudo eliminar el registro.');
     } finally {
@@ -154,86 +162,73 @@ function AdminCatalogo() {
     }
   };
 
-  const renderDisponibilidad = (item) => (
-    <span className={`badge ${item.disponibilidad === 'existe' ? 'badge-active' : 'badge-inactive'}`}>
-      {item.disponibilidad === 'existe' ? 'Activo' : 'Inexistente'}
-    </span>
-  );
-
-  const renderAccionEliminar = (item) => item.disponibilidad === 'existe' && (
-    <button
-      className="btn-peligro"
-      type="button"
-      onClick={() => eliminarRegistro(item)}
-      disabled={eliminandoId === item.id}
-    >
-      {eliminandoId === item.id ? 'Eliminando…' : 'Eliminar registro'}
-    </button>
-  );
-
   const renderItem = (item) => {
-    if (categoria === 'lecturas') {
-      return (
-        <div className="catalog-card" key={item.id}>
-          {item.portadaUrl && (
-            <img className="catalog-cover" src={`http://localhost:8081${item.portadaUrl}`} alt={`Portada de ${item.titulo}`} />
-          )}
-          <div className="catalog-card-header">
-            <h3>{item.titulo}</h3>
-            <div className="catalog-card-badges">
-              <span className="badge badge-admin">{item.estado}</span>
-              {renderDisponibilidad(item)}
-            </div>
-          </div>
-          <p><strong>Autor:</strong> {item.autor || 'No registrado'}</p>
-          <p><strong>Tipo:</strong> {item.tipo}</p>
-          <p><strong>Valoración:</strong> {item.valoracion || 'Sin valoración'}</p>
-          <p><strong>Usuario:</strong> {item.usuario?.usuario || 'Sin usuario'}</p>
-          <div className="catalog-card-actions">{renderAccionEliminar(item)}</div>
-        </div>
-      );
-    }
-
-    if (categoria === 'peliculas') {
-      return (
-        <div className="catalog-card" key={item.id}>
-          {item.portadaUrl && (
-            <img className="catalog-cover" src={`http://localhost:8081${item.portadaUrl}`} alt={`Portada de ${item.titulo}`} />
-          )}
-          <div className="catalog-card-header">
-            <h3>{item.titulo}</h3>
-            <div className="catalog-card-badges">
-              <span className="badge badge-admin">{item.estado}</span>
-              {renderDisponibilidad(item)}
-            </div>
-          </div>
-          <p><strong>Actor principal:</strong> {item.actorPrincipal || 'No registrado'}</p>
-          <p><strong>Género:</strong> {item.genero || 'No registrado'}</p>
-          <p><strong>Valoración:</strong> {item.valoracion || 'Sin valoración'}</p>
-          <p><strong>Usuario:</strong> {item.usuario?.usuario || 'Sin usuario'}</p>
-          <div className="catalog-card-actions">{renderAccionEliminar(item)}</div>
-        </div>
-      );
-    }
+    const baja = item.disponibilidad === 'inexistente';
 
     return (
-      <div className="catalog-card" key={item.id}>
+      <div
+        className={`catalog-card ${baja ? 'catalog-card--inexistente' : ''}`}
+        key={item.id}
+      >
         {item.portadaUrl && (
-          <img className="catalog-cover" src={`http://localhost:8081${item.portadaUrl}`} alt={`Portada de ${item.titulo}`} />
+          <img
+            className="catalog-cover"
+            src={`http://localhost:8081${item.portadaUrl}`}
+            alt={`Portada de ${item.titulo}`}
+          />
         )}
+
         <div className="catalog-card-header">
-          <h3>{item.titulo}</h3>
+          <h3 className="catalog-card-title" title={item.titulo}>
+            {item.titulo}
+          </h3>
           <div className="catalog-card-badges">
             <span className="badge badge-admin">{item.estado}</span>
-            {renderDisponibilidad(item)}
+            <span className={`badge ${baja ? 'badge-inactive' : 'badge-active'}`}>
+              {baja ? 'Inexistente' : 'Activo'}
+            </span>
           </div>
         </div>
-        <p><strong>Actor principal:</strong> {item.actorPrincipal || 'No registrado'}</p>
-        <p><strong>Capítulos:</strong> {item.numeroCapitulos ?? 'No registrado'}</p>
-        <p><strong>Género:</strong> {item.genero || 'No registrado'}</p>
+
+        {categoria === 'lecturas' && (
+          <>
+            <p><strong>Autor:</strong> {item.autor || 'No registrado'}</p>
+            <p><strong>Tipo:</strong> {item.tipo}</p>
+          </>
+        )}
+        {categoria === 'peliculas' && (
+          <>
+            <p><strong>Actor principal:</strong> {item.actorPrincipal || 'No registrado'}</p>
+            <p><strong>Género:</strong> {item.genero || 'No registrado'}</p>
+          </>
+        )}
+        {categoria === 'series' && (
+          <>
+            <p><strong>Actor principal:</strong> {item.actorPrincipal || 'No registrado'}</p>
+            <p><strong>Capítulos:</strong> {item.numeroCapitulos ?? 'No registrado'}</p>
+            <p><strong>Género:</strong> {item.genero || 'No registrado'}</p>
+          </>
+        )}
+
         <p><strong>Valoración:</strong> {item.valoracion || 'Sin valoración'}</p>
         <p><strong>Usuario:</strong> {item.usuario?.usuario || 'Sin usuario'}</p>
-        <div className="catalog-card-actions">{renderAccionEliminar(item)}</div>
+
+        <div className="catalog-card-actions">
+          {baja ? (
+            <button type="button" className="btn-peligro" disabled>
+              Ya eliminado
+            </button>
+          ) : (
+            <button
+              className="btn-peligro"
+              type="button"
+              onClick={() => eliminarRegistro(item)}
+              disabled={eliminandoId === item.id}
+            >
+              {eliminandoId === item.id ? 'Eliminando…' : 'Eliminar registro'}
+            </button>
+          )}
+        </div>
       </div>
     );
   };
@@ -284,9 +279,16 @@ function AdminCatalogo() {
           </label>
           <label>
             <span className="sr-only">Filtrar por estado</span>
-            <select value={estadoFiltro} onChange={(event) => setEstadoFiltro(event.target.value)}>
+            <select
+              value={estadoFiltro}
+              onChange={(event) => setEstadoFiltro(event.target.value)}
+            >
               <option value="todos">Todos los estados</option>
-              {estados.map((estado) => <option key={estado} value={estado}>{estado}</option>)}
+              {estados.map((estado) => (
+                <option key={estado} value={estado}>
+                  {estado}
+                </option>
+              ))}
             </select>
           </label>
           <label>

@@ -2,7 +2,7 @@
   min-height: 100svh;
   padding: 44px 24px 64px;
   color: #173f3a;
-  background: #f5f1e9;
+  background: #e8eee8;
 }
 
 .admin-header,
@@ -17,22 +17,30 @@
   justify-content: space-between;
   gap: 24px;
   margin-bottom: 28px;
+  padding: 28px 32px;
+  background: #173f3a;
+  color: #f4f0e7;
 }
 
 .admin-header .eyebrow {
   margin: 0 0 14px;
+  color: #e2b967;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-size: 11px;
+  font-weight: 700;
 }
 
 .admin-header h1 {
   margin: 0;
-  color: #173f3a;
+  color: #f4f0e7;
   font-size: clamp(34px, 5vw, 56px);
   line-height: 1;
 }
 
 .admin-subtitulo {
   margin: 14px 0 0;
-  color: #718078;
+  color: #c7d4cd;
 }
 
 .admin-actions,
@@ -46,34 +54,64 @@
 
 .admin-panel {
   padding: clamp(20px, 4vw, 36px);
-  border: 1px solid #ded7ca;
+  border: 1px solid #c5d0c8;
   background: #fffdf9;
-  box-shadow: 0 18px 50px rgba(23, 63, 58, 0.07);
+  box-shadow: 0 18px 50px rgba(23, 63, 58, 0.1);
+}
+
+.admin-block {
+  margin-bottom: 8px;
+}
+
+.admin-block--mis-registros {
+  margin: 0 0 28px;
+  padding: 28px 24px;
+  border: 1px solid #c5d0c8;
+  background: #eef2eb;
+}
+
+.admin-block-note {
+  margin: 10px 0 0;
+  color: #5a6f66;
+  font-size: 14px;
+}
+
+.admin-section-heading--center {
+  justify-content: center;
+  text-align: center;
+  margin-top: 0;
+}
+
+.admin-section-heading--center > div {
+  width: 100%;
 }
 
 .admin-resumen {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  border-block: 1px solid #ded7ca;
+  margin: 28px 0 8px;
+  border: 1px solid #c5d0c8;
+  background: #173f3a;
 }
 
 .resumen-cifra {
-  padding: 20px 24px;
+  padding: 22px 24px;
+  text-align: center;
 }
 
 .resumen-cifra + .resumen-cifra {
-  border-left: 1px solid #ded7ca;
+  border-left: 1px solid rgba(255, 253, 249, 0.18);
 }
 
 .resumen-cifra span {
-  font-size: 32px;
+  font-size: 34px;
   font-weight: 700;
-  color: #173f3a;
+  color: #e2b967;
 }
 
 .resumen-cifra p {
-  margin: 5px 0 0;
-  color: #718078;
+  margin: 6px 0 0;
+  color: #c7d4cd;
   font-size: 13px;
 }
 
@@ -82,17 +120,18 @@
   align-items: flex-end;
   justify-content: space-between;
   gap: 16px;
-  margin: 32px 0 16px;
+  margin: 28px 0 16px;
 }
 
 .admin-section-heading h2 {
   margin: 0;
   font-size: 26px;
+  color: #173f3a;
 }
 
 .admin-section-heading .panel-kicker {
   margin: 0 0 7px;
-  color: #8a8071;
+  color: #5a6f66;
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.14em;
@@ -100,7 +139,7 @@
 }
 
 .admin-total {
-  color: #718078;
+  color: #5a6f66;
   font-size: 13px;
   white-space: nowrap;
 }
@@ -114,7 +153,28 @@
 .admin-mis-registros {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
+  justify-content: center;
+  gap: 14px;
+  margin-top: 22px;
+}
+
+.btn-mis-registro {
+  min-width: min(220px, 100%);
+  padding: 16px 22px;
+  border: 2px solid #173f3a;
+  background: #173f3a;
+  color: #fffdf9;
+  font: inherit;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 160ms ease, color 160ms ease, transform 160ms ease;
+}
+
+.btn-mis-registro:hover {
+  transform: translateY(-2px);
+  background: #265d54;
+  border-color: #265d54;
 }
 
 .categoria-link {
@@ -124,8 +184,8 @@
   gap: 14px;
   min-width: 0;
   padding: 18px;
-  border: 1px solid #ded7ca;
-  background: #f8f5ee;
+  border: 1px solid #c5d0c8;
+  background: #eef2eb;
   color: #173f3a;
   text-align: left;
   cursor: pointer;
@@ -135,7 +195,7 @@
 .categoria-link:hover {
   transform: translateY(-2px);
   border-color: #173f3a;
-  background: #eef2eb;
+  background: #dce6df;
 }
 
 .categoria-indice {
@@ -154,7 +214,7 @@
 }
 
 .categoria-texto small {
-  color: #718078;
+  color: #5a6f66;
   font-size: 12px;
 }
 
@@ -163,7 +223,7 @@
 }
 
 .usuarios-heading {
-  margin-top: 38px;
+  margin-top: 24px;
 }
 
 .admin-filtros,
@@ -184,7 +244,7 @@
   width: 100%;
   min-height: 46px;
   padding: 11px 13px;
-  border: 1px solid #c9c0b2;
+  border: 1px solid #b7c4bc;
   border-radius: 0;
   background: #fffdf9;
   color: #173f3a;
@@ -210,36 +270,54 @@
 }
 
 .admin-card {
-  display: flex;
+  display: grid;
+  grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr) minmax(0, 1fr) 150px;
   align-items: center;
-  justify-content: space-between;
-  gap: 20px;
+  gap: 16px 20px;
   padding: 16px 18px;
-  border: 1px solid #e4ded3;
+  border: 1px solid #d0dbd4;
   background: #fffdf9;
 }
 
+.admin-card--inexistente {
+  background: #fdf8f6;
+  border-color: #e8cfc9;
+}
+
+.admin-card-col {
+  min-width: 0;
+}
+
+.admin-card-col h3,
 .admin-card h3 {
   margin: 6px 0 0;
   font-size: 17px;
+  overflow-wrap: anywhere;
 }
 
 .admin-card-label {
   margin: 0;
-  color: #8a8071;
+  color: #5a6f66;
   font-size: 10px;
   font-weight: 700;
   letter-spacing: 0.12em;
   text-transform: uppercase;
 }
 
-.admin-card-actions,
-.catalog-card-actions,
-.catalog-card-badges {
+.admin-card-actions {
   display: flex;
   align-items: center;
-  flex-wrap: wrap;
+  justify-content: flex-end;
+  flex-wrap: nowrap;
   gap: 8px;
+  width: 100%;
+  min-height: 40px;
+}
+
+.admin-card-actions .btn-peligro {
+  width: 100%;
+  min-width: 130px;
+  text-align: center;
 }
 
 .badge {
@@ -258,13 +336,13 @@
 }
 
 .badge-user {
-  background: #e5efeb;
-  color: #28574e;
+  background: #dce6df;
+  color: #173f3a;
 }
 
 .badge-active {
-  background: #e5efeb;
-  color: #28574e;
+  background: #dce6df;
+  color: #173f3a;
 }
 
 .badge-inactive {
@@ -274,7 +352,7 @@
 
 .admin-tabs {
   margin-bottom: 22px;
-  border-bottom: 1px solid #ded7ca;
+  border-bottom: 1px solid #c5d0c8;
 }
 
 .tab {
@@ -282,7 +360,7 @@
   border: 0;
   border-bottom: 2px solid transparent;
   background: transparent;
-  color: #718078;
+  color: #5a6f66;
   font: inherit;
   font-weight: 700;
   cursor: pointer;
@@ -301,42 +379,80 @@
   padding-inline: 4px;
 }
 
+/* ========== CATÁLOGO ========== */
 .catalog-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
-  gap: 12px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+  align-items: stretch;
 }
 
 .catalog-card {
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
   min-width: 0;
   padding: 18px;
-  border: 1px solid #e4ded3;
+  border: 1px solid #d0dbd4;
   background: #fffdf9;
 }
 
+.catalog-card--inexistente {
+  background: #fdf8f6;
+  border-color: #e8cfc9;
+}
+
+/* Reserva fija para la portada: con o sin imagen la tarjeta mide igual */
+.catalog-cover,
+.catalog-cover-placeholder {
+  display: block;
+  width: 100%;
+  height: 180px;
+  margin: 0 0 16px;
+  background: #eef2eb;
+  object-fit: contain;
+  object-position: center;
+  flex-shrink: 0;
+}
+
+.catalog-cover-placeholder {
+  border: 1px dashed #c5d0c8;
+}
+
 .catalog-card-header {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
   gap: 12px;
   margin-bottom: 14px;
+  flex-shrink: 0;
 }
 
+.catalog-card-title,
 .catalog-card h3 {
-  overflow-wrap: anywhere;
   margin: 0;
+  min-width: 0;
+  min-height: 2.5em;
   font-size: 18px;
+  line-height: 1.25;
+  color: #173f3a;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  white-space: normal;
 }
 
-.catalog-cover {
-  display: block;
-  width: auto;
-  max-width: 100%;
-  height: 190px;
-  object-fit: contain;
-  object-position: left center;
-  margin: 0 auto 16px 0;
-  background: #f5f1e9;
+.catalog-card-badges {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  flex-shrink: 0;
+  gap: 6px;
+}
+
+.catalog-card-body {
+  flex: 1 1 auto;
 }
 
 .catalog-card p {
@@ -350,8 +466,18 @@
 }
 
 .catalog-card-actions {
+  display: flex;
   justify-content: flex-end;
-  margin-top: 16px;
+  align-items: center;
+  margin-top: auto;
+  padding-top: 16px;
+  min-height: 52px;
+  flex-shrink: 0;
+}
+
+.catalog-card-actions .btn-peligro {
+  min-width: 140px;
+  text-align: center;
 }
 
 .btn-primario,
@@ -366,23 +492,33 @@
 }
 
 .btn-primario {
-  background: #173f3a;
-  color: #fffdf9;
+  background: #e2b967;
+  color: #173f3a;
 }
 
 .btn-primario:hover {
   transform: translateY(-1px);
-  background: #265d54;
+  background: #d4a84a;
 }
 
 .btn-secundario {
-  border: 1px solid #c9c0b2;
+  border: 1px solid rgba(255, 253, 249, 0.35);
+  background: transparent;
+  color: #f4f0e7;
+}
+
+.admin-header .btn-secundario:hover {
+  background: rgba(255, 253, 249, 0.12);
+}
+
+.admin-panel .btn-secundario {
+  border: 1px solid #b7c4bc;
   background: #fffdf9;
   color: #173f3a;
 }
 
-.btn-secundario:hover {
-  background: #e8eee8;
+.admin-panel .btn-secundario:hover {
+  background: #eef2eb;
 }
 
 .btn-peligro {
@@ -401,13 +537,22 @@
 }
 
 .btn-peligro:disabled {
-  cursor: wait;
+  cursor: not-allowed;
   opacity: 0.6;
 }
 
 .estado-msg {
   margin: 18px 0;
-  color: #718078;
+  color: #5a6f66;
+}
+
+.form-message {
+  margin: 12px 0;
+  font-size: 14px;
+}
+
+.error-message {
+  color: #8a3026;
 }
 
 .sr-only {
@@ -420,6 +565,12 @@
   clip-path: inset(50%);
 }
 
+@media (max-width: 900px) {
+  .catalog-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
 @media (max-width: 760px) {
   .admin-page {
     padding: 28px 16px 40px;
@@ -428,10 +579,16 @@
   .admin-header {
     align-items: flex-start;
     flex-direction: column;
+    padding: 22px 18px;
   }
 
   .admin-actions {
     flex-wrap: wrap;
+  }
+
+  .admin-card {
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr) minmax(0, 0.9fr) 130px;
+    gap: 12px;
   }
 
   .admin-card-actions {
@@ -457,7 +614,7 @@
   }
 
   .resumen-cifra + .resumen-cifra {
-    border-top: 1px solid #ded7ca;
+    border-top: 1px solid rgba(255, 253, 249, 0.18);
     border-left: 0;
   }
 
@@ -475,11 +632,39 @@
   }
 
   .admin-card {
+    grid-template-columns: 1fr;
     align-items: flex-start;
-    flex-direction: column;
+  }
+
+  .admin-card-actions {
+    justify-content: flex-start;
+  }
+
+  .admin-card-actions .btn-peligro {
+    width: auto;
+    min-width: 130px;
   }
 
   .admin-section-heading {
     align-items: flex-start;
+  }
+
+  .btn-mis-registro {
+    width: 100%;
+  }
+
+  .catalog-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .catalog-card-header {
+    grid-template-columns: 1fr;
+  }
+
+  .catalog-card-badges {
+    align-items: flex-start;
+    flex-direction: row;
+    flex-wrap: wrap;
   }
 }

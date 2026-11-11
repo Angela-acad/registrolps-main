@@ -66,8 +66,8 @@ function AdminDashboard() {
     return usuarios.filter((item) => {
       const coincideNombre = (item.usuario || '').toLocaleLowerCase().includes(consulta);
       const coincideTipo = tipoFiltro === 'todos' || item.tipo === tipoFiltro;
-      const coincideDisponibilidad = disponibilidadFiltro === 'todos'
-        || item.disponibilidad === disponibilidadFiltro;
+      const coincideDisponibilidad =
+        disponibilidadFiltro === 'todos' || item.disponibilidad === disponibilidadFiltro;
       return coincideNombre && coincideTipo && coincideDisponibilidad;
     });
   }, [usuarios, busqueda, tipoFiltro, disponibilidadFiltro]);
@@ -97,9 +97,11 @@ function AdminDashboard() {
         return;
       }
 
-      setUsuarios((actuales) => actuales.map((cuenta) => (
-        cuenta.id === item.id ? { ...cuenta, disponibilidad: 'inexistente' } : cuenta
-      )));
+      setUsuarios((actuales) =>
+        actuales.map((cuenta) =>
+          cuenta.id === item.id ? { ...cuenta, disponibilidad: 'inexistente' } : cuenta
+        )
+      );
     } catch (error) {
       setError(error.message || 'No se pudo eliminar la cuenta.');
     } finally {
@@ -139,6 +141,75 @@ function AdminDashboard() {
       </section>
 
       <section className="admin-panel">
+        {/* 1. Mis registros — arriba */}
+        <div className="admin-block admin-block--mis-registros">
+          <div className="admin-section-heading admin-section-heading--center">
+            <div>
+              <p className="panel-kicker">Tu cuenta</p>
+              <h2>Mis registros</h2>
+              <p className="admin-block-note">
+                Crear, modificar y eliminar tus propios libros, películas y series
+              </p>
+            </div>
+          </div>
+
+          <div className="admin-mis-registros">
+            <button
+              className="btn-mis-registro"
+              type="button"
+              onClick={() => navigate('/lectura')}
+            >
+              Gestionar mis libros
+            </button>
+            <button
+              className="btn-mis-registro"
+              type="button"
+              onClick={() => navigate('/pelicula')}
+            >
+              Gestionar mis películas
+            </button>
+            <button
+              className="btn-mis-registro"
+              type="button"
+              onClick={() => navigate('/serie')}
+            >
+              Gestionar mis series
+            </button>
+          </div>
+        </div>
+
+        {/* 2. Catálogo global */}
+        <div className="admin-block">
+          <div className="admin-section-heading">
+            <div>
+              <p className="panel-kicker">Explorar registros</p>
+              <h2>Catálogo global</h2>
+            </div>
+            <span className="admin-total">3 categorías</span>
+          </div>
+
+          <div className="admin-categorias">
+            {CATEGORIAS.map((item, index) => (
+              <button
+                className="categoria-link"
+                key={item.key}
+                type="button"
+                onClick={() => navigate(`/admin/catalogo?categoria=${item.key}`)}
+              >
+                <span className="categoria-indice">0{index + 1}</span>
+                <span className="categoria-texto">
+                  <strong>{item.label}</strong>
+                  <small>{item.descripcion}</small>
+                </span>
+                <span className="categoria-flecha" aria-hidden="true">
+                  →
+                </span>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* 3. Resumen — justo encima de usuarios */}
         <div className="admin-resumen">
           <div className="resumen-cifra">
             <span>{usuarios.length}</span>
@@ -149,57 +220,14 @@ function AdminDashboard() {
             <p>Cuentas activas</p>
           </div>
           <div className="resumen-cifra">
-            <span>{usuarios.filter((item) => item.disponibilidad === 'inexistente').length}</span>
+            <span>
+              {usuarios.filter((item) => item.disponibilidad === 'inexistente').length}
+            </span>
             <p>Cuentas inexistentes</p>
           </div>
         </div>
 
-        <div className="admin-section-heading">
-          <div>
-            <p className="panel-kicker">Explorar registros</p>
-            <h2>Catálogo global</h2>
-          </div>
-          <span className="admin-total">3 categorías</span>
-        </div>
-
-        <div className="admin-categorias">
-          {CATEGORIAS.map((item, index) => (
-            <button
-              className="categoria-link"
-              key={item.key}
-              type="button"
-              onClick={() => navigate(`/admin/catalogo?categoria=${item.key}`)}
-            >
-              <span className="categoria-indice">0{index + 1}</span>
-              <span className="categoria-texto">
-                <strong>{item.label}</strong>
-                <small>{item.descripcion}</small>
-              </span>
-              <span className="categoria-flecha" aria-hidden="true">→</span>
-            </button>
-          ))}
-        </div>
-
-        <div className="admin-section-heading usuarios-heading">
-          <div>
-            <p className="panel-kicker">Tu cuenta</p>
-            <h2>Mis registros</h2>
-          </div>
-          <span className="admin-total">Crear, modificar y eliminar los tuyos</span>
-        </div>
-
-        <div className="admin-mis-registros">
-          <button className="btn-secundario" type="button" onClick={() => navigate('/lectura')}>
-            Gestionar mis libros
-          </button>
-          <button className="btn-secundario" type="button" onClick={() => navigate('/pelicula')}>
-            Gestionar mis películas
-          </button>
-          <button className="btn-secundario" type="button" onClick={() => navigate('/serie')}>
-            Gestionar mis series
-          </button>
-        </div>
-
+        {/* 4. Usuarios */}
         <div className="admin-section-heading usuarios-heading">
           <div>
             <p className="panel-kicker">Administración</p>
@@ -248,37 +276,55 @@ function AdminDashboard() {
             {usuariosFiltrados.length === 0 ? (
               <p className="estado-msg">No hay usuarios que coincidan con la búsqueda.</p>
             ) : (
-              usuariosFiltrados.map((item) => (
-                <div className="admin-card" key={item.id}>
-                  <div>
-                    <p className="admin-card-label">Usuario</p>
-                    <h3>{item.usuario}</h3>
-                  </div>
+              usuariosFiltrados.map((item) => {
+                const baja = item.disponibilidad === 'inexistente';
+                return (
+                  <div
+                    className={`admin-card ${baja ? 'admin-card--inexistente' : ''}`}
+                    key={item.id}
+                  >
+                    <div className="admin-card-col">
+                      <p className="admin-card-label">Usuario</p>
+                      <h3>{item.usuario}</h3>
+                    </div>
 
-                  <div>
-                    <p className="admin-card-label">Tipo</p>
-                    <span className={`badge ${item.tipo === 'Administrador' ? 'badge-admin' : 'badge-user'}`}>
-                      {item.tipo}
-                    </span>
-                  </div>
-
-                  <div className="admin-card-actions">
-                    <span className={`badge ${item.disponibilidad === 'existe' ? 'badge-active' : 'badge-inactive'}`}>
-                      {item.disponibilidad === 'existe' ? 'Activo' : 'Inexistente'}
-                    </span>
-                    {item.disponibilidad === 'existe' && (
-                      <button
-                        className="btn-peligro"
-                        type="button"
-                        onClick={() => eliminarUsuario(item)}
-                        disabled={eliminandoId === item.id}
+                    <div className="admin-card-col">
+                      <p className="admin-card-label">Tipo</p>
+                      <span
+                        className={`badge ${
+                          item.tipo === 'Administrador' ? 'badge-admin' : 'badge-user'
+                        }`}
                       >
-                        {eliminandoId === item.id ? 'Eliminando…' : 'Eliminar cuenta'}
-                      </button>
-                    )}
+                        {item.tipo}
+                      </span>
+                    </div>
+
+                    <div className="admin-card-col">
+                      <p className="admin-card-label">Estado</p>
+                      <span className={`badge ${baja ? 'badge-inactive' : 'badge-active'}`}>
+                        {baja ? 'Inexistente' : 'Activo'}
+                      </span>
+                    </div>
+
+                    <div className="admin-card-col admin-card-actions">
+                      {baja ? (
+                        <button type="button" className="btn-peligro" disabled>
+                          Ya eliminado
+                        </button>
+                      ) : (
+                        <button
+                          className="btn-peligro"
+                          type="button"
+                          onClick={() => eliminarUsuario(item)}
+                          disabled={eliminandoId === item.id}
+                        >
+                          {eliminandoId === item.id ? 'Eliminando…' : 'Eliminar cuenta'}
+                        </button>
+                      )}
+                    </div>
                   </div>
-                </div>
-              ))
+                );
+              })
             )}
           </div>
         )}
