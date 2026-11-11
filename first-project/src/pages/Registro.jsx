@@ -8,7 +8,6 @@ function Registro() {
   const [formData, setFormData] = useState({
     usuario: '',
     password: '',
-    tipo: '',
   });
 
   const [errores, setErrores] = useState({});
@@ -28,24 +27,22 @@ function Registro() {
   const validar = (datos) => {
     const errores = {};
 
-    if (!datos.tipo) {
-      errores.tipo = 'Por favor, defina su tipo de usuario';
-    }
-
     if (!datos.usuario) {
       errores.usuario = 'Por favor, ingrese su nombre de usuario';
     } else if (datos.usuario.length < 4) {
-      errores.usuario = 'Recuerde que su usuario tiene más de 3 caracteres';
+      errores.usuario = 'El usuario debe tener más de 3 caracteres';
     } else if (datos.usuario.includes(' ')) {
-      errores.usuario = 'Recuerde que su usuario no contiene espacios';
+      errores.usuario = 'El usuario no debe contener espacios';
+    } else if (!/^[a-zA-Z0-9_]+$/.test(datos.usuario)) {
+      errores.usuario = 'El usuario no debe contener caracteres especiales';
     }
 
     if (!datos.password) {
       errores.password = 'Por favor, ingrese su contraseña';
     } else if (datos.password.length < 6) {
-      errores.password = 'Recuerde que su contraseña tiene más de 5 caracteres';
+      errores.password = 'La contraseña debe tener más de 5 caracteres';
     } else if (datos.password.includes(' ')) {
-      errores.password = 'Recuerde que su contraseña no contiene espacios';
+      errores.password = 'La contraseña no debe contener espacios';
     }
 
     return errores;
@@ -54,41 +51,63 @@ function Registro() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const objetoErrores = validar(formData);
-    setErrores(objetoErrores);
+    const nuevosErrores = validar(formData);
+    setErrores(nuevosErrores);
 
-    if (Object.keys(objetoErrores).length > 0) {
+    if (Object.keys(nuevosErrores).length > 0) {
       return;
     }
 
     setCargando(true);
     setMensaje({ texto: '', tipo: '' });
 
+    const body = {
+      usuario: formData.usuario,
+      password: formData.password,
+      tipo: 'Usuario_estandar',
+    };
+
     try {
-      const response = await fetch('http://localhost:8081/api/usuario/registro', {
+      const response = await fetch('http://localhost:8080/api/usuario/registro', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          usuario: formData.usuario,
-          password: formData.password,
-          tipo: formData.tipo,
-        }),
+        body: JSON.stringify(body),
       });
 
       const data = await response.json().catch(() => ({}));
 
       if (!response.ok) {
+        const textoServidor = (data.mensaje || data.message || '').toLowerCase();
+
+        const esDuplicado =
+          response.status === 400 ||
+          response.status === 409 ||
+          textoServidor.includes('existe') ||
+          textoServidor.includes('duplic') ||
+          textoServidor.includes('ya está') ||
+          textoServidor.includes('ya esta') ||
+          textoServidor.includes('en uso');
+
         setMensaje({
-          texto: data.mensaje || 'No se pudo registrar el usuario',
+          texto: esDuplicado
+            ? 'Este usuario ya está en uso'
+            : 'No se pudo crear la cuenta. Intenta de nuevo.',
           tipo: 'error',
         });
         setCargando(false);
         return;
       }
 
-      // El backend devuelve el usuario (sin password) → misma sesión que el login
-      localStorage.setItem('usuario', JSON.stringify(data));
-      navigate('/inicio', { replace: true });
+      const usuarioCreado = data.usuario
+        ? { ...data.usuario, password: undefined }
+        : {
+            id: data.id,
+            usuario: data.usuario ?? formData.usuario,
+            tipo: data.tipo ?? 'Usuario_estandar',
+          };
+
+      localStorage.setItem('usuario', JSON.stringify(usuarioCreado));
+      navigate('/inicio');
     } catch {
       setMensaje({
         texto: 'Error de conexión con el servidor',
@@ -101,20 +120,11 @@ function Registro() {
   return (
     <div className="registro-page">
       <section className="registro-intro">
-        <div className="brand-header">
-          <img
-            src="/Logo.png"
-            alt="Logo de Registro LPS"
-            className="brand-logo"
-          />
-          <p className="eyebrow">Registro LPS</p>
-        </div>
+        <p className="eyebrow">Registro LPS</p>
         <h1>Crear cuenta</h1>
-        <p>
-          Regístrate para empezar a gestionar tus lecturas, películas y series.
-        </p>
+        <p>Regístrate para organizar tus lecturas, películas y series.</p>
         <div className="intro-line" />
-        <p className="intro-note">Los campos con * son obligatorios</p>
+        <p className="intro-note">Solo se crean cuentas de usuario estándar</p>
       </section>
 
       <section className="registro-panel">
@@ -122,8 +132,8 @@ function Registro() {
           <div className="panel-heading">
             <div className="panel-mark">R</div>
             <div>
-              <p className="panel-kicker">Formulario</p>
-              <h2>Nuevo usuario</h2>
+              <p className="panel-kicker">Acceso</p>
+              <h2>Registro</h2>
             </div>
           </div>
           <div className="panel-acciones">
@@ -132,60 +142,22 @@ function Registro() {
               className="btn-secundario"
               onClick={() => navigate('/login')}
             >
-              Ya tengo cuenta
+              Ir a Login
             </button>
           </div>
         </div>
 
         <form className="formulario-registro" onSubmit={handleSubmit} noValidate>
-          <fieldset className="field-group role-options">
-            <legend>Tipo de usuario *</legend>
-            <div className="role-grid">
-              <label
-                className={`role-option ${formData.tipo === 'Administrador' ? 'selected' : ''}`}
-              >
-                <input
-                  type="radio"
-                  name="tipo"
-                  value="Administrador"
-                  checked={formData.tipo === 'Administrador'}
-                  onChange={handleChange}
-                />
-                <span>
-                  <strong>Administrador</strong>
-                  <small>Gestión completa</small>
-                </span>
-              </label>
-
-              <label
-                className={`role-option ${formData.tipo === 'Usuario_estandar' ? 'selected' : ''}`}
-              >
-                <input
-                  type="radio"
-                  name="tipo"
-                  value="Usuario_estandar"
-                  checked={formData.tipo === 'Usuario_estandar'}
-                  onChange={handleChange}
-                />
-                <span>
-                  <strong>Usuario estándar</strong>
-                  <small>Uso personal</small>
-                </span>
-              </label>
-            </div>
-            {errores.tipo && <span className="error">{errores.tipo}</span>}
-          </fieldset>
-
           <div className="field-group">
-            <label htmlFor="usuario">Nombre de usuario *</label>
+            <label htmlFor="usuario">Usuario *</label>
             <input
               id="usuario"
               type="text"
               name="usuario"
-              placeholder="Mínimo 4 caracteres, sin espacios"
               value={formData.usuario}
               onChange={handleChange}
-              aria-invalid={errores.usuario ? 'true' : 'false'}
+              placeholder="Mínimo 4 caracteres"
+              autoComplete="username"
             />
             {errores.usuario && <span className="error">{errores.usuario}</span>}
           </div>
@@ -196,13 +168,17 @@ function Registro() {
               id="password"
               type="password"
               name="password"
-              placeholder="Mínimo 6 caracteres, sin espacios"
               value={formData.password}
               onChange={handleChange}
-              aria-invalid={errores.password ? 'true' : 'false'}
+              placeholder="Mínimo 6 caracteres"
+              autoComplete="new-password"
             />
             {errores.password && <span className="error">{errores.password}</span>}
           </div>
+
+          <p className="intro-note" style={{ marginTop: 0 }}>
+            Tipo de cuenta: <strong>Usuario estándar</strong>
+          </p>
 
           {mensaje.texto && (
             <p
